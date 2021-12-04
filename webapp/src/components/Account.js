@@ -8,14 +8,11 @@ function Account(props) {
     const onClick = async () => {
         try {
             const accounts = await props.wallet.connect();
-            console.log(accounts);
             props.setAccount(accounts[0])
             setBtnIsDisabled(true)
         } catch (_) {}
     }
 
-    console.log("State")
-    console.log(props.account)
     return (<>
         {props.account?"Account: " + props.account.address:<Button variant="light" disabled={isBtnDisabled} onClick={onClick}>Connect</Button>}
     </>);
