@@ -1,6 +1,5 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css'
-import {Table,Form,InputGroup,FormControl} from 'react-bootstrap'
 
 function Asset(props) {
     const [assetInfo, setAssetInfo] = React.useState(false)

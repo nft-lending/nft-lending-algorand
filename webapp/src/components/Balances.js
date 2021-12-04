@@ -1,11 +1,10 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
-import {Table,Form,InputGroup,FormControl} from 'react-bootstrap'
+import {Table} from 'react-bootstrap'
 import Asset from './Asset'
 
 function Balances(props) {
     const [accountInfo, setAccountInfo] = React.useState(false)
-    const [infoNFT, setInfoNFT] = React.useState("")
 
     React.useEffect(() => {
         const fetchAccountInfo = async () => {
