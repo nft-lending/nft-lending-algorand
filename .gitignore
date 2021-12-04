@@ -1,1 +1,4 @@
 private/*
+venv
+build/*
+!.gitkeep
