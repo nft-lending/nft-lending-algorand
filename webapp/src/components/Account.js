@@ -13,10 +13,12 @@ function Account(props) {
     const [isBtnDisabled, setBtnIsDisabled] = React.useState(false)
 
     const onClick = async () => {
-        const accounts = await props.wallet.connect();
-        console.log(accounts);
-        props.setAccount(accounts[0])
-        setBtnIsDisabled(true)
+        try {
+            const accounts = await props.wallet.connect();
+            console.log(accounts);
+            props.setAccount(accounts[0])
+            setBtnIsDisabled(true)
+        } catch (_) {}
     }
 
     console.log("State")
