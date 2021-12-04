@@ -1,13 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css'
 import {Button} from 'react-bootstrap'
-import algosdk from 'algosdk'
-
-const algodClient = new algosdk.Algodv2(
-        '', 
-        'https://api.algoexplorer.io', 
-        ''
-    );
 
 function Account(props) {
     const [isBtnDisabled, setBtnIsDisabled] = React.useState(false)
