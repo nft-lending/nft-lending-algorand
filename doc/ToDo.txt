@@ -1,0 +1,8 @@
+Test 1:
+- Create contract
+- List contracts in user interface
+- Try to delete contract
+
+Test 2:
+- Opt in all accounts into NFT and contract
+- Test auction
