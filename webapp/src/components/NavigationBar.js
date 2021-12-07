@@ -1,16 +1,15 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
-import { Navbar } from 'react-bootstrap'
-import MyAlgoConnect from '@randlabs/myalgo-connect'
+import { Container, Navbar } from 'react-bootstrap'
 import Account from './Account'
-
-const wallet = new MyAlgoConnect();
 
 function NavigationBar(props) {
     return (
         <Navbar className="bg-light justify-content-between">
-            <Navbar.Brand variant="primary">NFT Loans</Navbar.Brand>
-            <Navbar.Text> <Account wallet={wallet} account={props.account} setAccount={props.setAccount}/> </Navbar.Text>
+            <Container>
+                <Navbar.Brand variant="primary"> NFT Loans</Navbar.Brand>
+                <Navbar.Text> <Account wallet={props.wallet} account={props.account} setAccount={props.setAccount}/> </Navbar.Text>
+            </Container>
         </Navbar>
     );
 }

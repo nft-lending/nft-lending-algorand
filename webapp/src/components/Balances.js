@@ -4,17 +4,6 @@ import {Table} from 'react-bootstrap'
 import Asset from './Asset'
 
 function Balances(props) {
-    const [accountInfo, setAccountInfo] = React.useState(false)
-
-    React.useEffect(() => {
-        const fetchAccountInfo = async () => {
-            const accountInfo = await props.algodClient.accountInformation(props.account.address).do();
-            setAccountInfo(accountInfo);
-        }
-        fetchAccountInfo()
-    }, [props.account, props.algodClient]);
-    
-    if (!accountInfo) return(<>Please connect.</>)
     return (<>
         <Table striped bordered hover>
             <thead>
@@ -28,9 +17,9 @@ function Balances(props) {
                 <tr>
                 <td>Algo</td>
                 <td></td>
-                <td>{accountInfo.amount / 1000000.0}</td>
+                <td>{props.accountInfo.amount / 1000000.0}</td>
                 </tr>
-                {accountInfo.assets.filter(asset => asset.amount>0).map(asset => <Asset asset={asset} algodClient={props.algodClient}/>)}
+                {props.accountInfo.assets.filter(asset => asset.amount>0).map(asset => <Asset key={asset} asset={asset} algodClient={props.algodClient}/>)}
             </tbody>
         </Table>
     </>);

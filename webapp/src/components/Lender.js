@@ -4,7 +4,7 @@ import Balances from './Balances'
 
 function Lender(props) {
     return (<>
-        <Balances algodClient={props.algodClient} account={props.account}/>
+        <Balances algodClient={props.algodClient} account={props.account} accountInfo={props.accountInfo} />
         </>);
 }
 
