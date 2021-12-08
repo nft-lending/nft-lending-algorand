@@ -59,24 +59,24 @@ def approval_program():
     on_create_max_repay = Btoi(Txn.application_args[4])
     on_create_min_bid_decrement_factor = Btoi(Txn.application_args[5])
     on_create = Seq(
-        Assert(
-            And(
-                Txn.application_args.length() == Int(6),
-                Global.latest_timestamp() < on_create_auction_end_time, # cannot end before creation
-                on_create_auction_end_time < on_create_repay_deadline, # cannot repay before auction end
-                on_create_loan_amount < on_create_max_repay, # repaying more than borrowing
-                on_create_min_bid_decrement_factor >= Int(0), # 0 would mean "buy now" instead of auction
-                on_create_min_bid_decrement_factor < Int(DENOMINATOR), # prevent increasing bids for repayment amount
-            )
-        ),
-        App.globalPut(borrower_key, Txn.sender()), # borrower initiates the auction
+        #Assert(
+        #    And(
+        #        Txn.application_args.length() == Int(6),
+        #        Global.latest_timestamp() < on_create_auction_end_time, # cannot end before creation
+                #on_create_auction_end_time < on_create_repay_deadline, # cannot repay before auction end
+                #on_create_loan_amount < on_create_max_repay, # repaying more than borrowing
+                #on_create_min_bid_decrement_factor >= Int(0), # 0 would mean "buy now" instead of auction
+                #on_create_min_bid_decrement_factor < Int(DENOMINATOR), # prevent increasing bids for repayment amount
+        #    )
+        #),
+        #App.globalPut(borrower_key, Txn.sender()), # borrower initiates the auction
         App.globalPut(nft_id_key, on_create_nft_id),
         App.globalPut(auction_end_time_key, on_create_auction_end_time),
         App.globalPut(repay_deadline_key, on_create_repay_deadline),  
         App.globalPut(loan_amount_key, on_create_loan_amount),
         App.globalPut(repay_amount_key, on_create_max_repay),
         App.globalPut(min_bid_decrement_factor_key, on_create_min_bid_decrement_factor),
-        App.globalPut(winning_lender_key, Global.zero_address()),
+        #App.globalPut(winning_lender_key, Global.zero_address()),
         Approve(),
     )
 

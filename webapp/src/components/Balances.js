@@ -2,9 +2,12 @@ import React from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
 import {Table} from 'react-bootstrap'
 import Asset from './Asset'
+import AppItem from './AppItem'
 
 function Balances(props) {
-    return (<>
+console.log("Balances wallet")
+console.log(props.wallet)
+        return (<>
         <Table striped bordered hover>
             <thead>
                 <tr>
@@ -19,7 +22,8 @@ function Balances(props) {
                 <td></td>
                 <td>{props.accountInfo.amount / 1000000.0}</td>
                 </tr>
-                {props.accountInfo.assets.filter(asset => asset.amount>=0).map(asset => <Asset key={asset} asset={asset} algodClient={props.algodClient}/>)}
+                {props.accountInfo.assets.filter(asset => asset.amount>=0).map(asset => <Asset key={asset['asset-id']} asset={asset} algodClient={props.algodClient} wallet={props.wallet} account={props.account} accountInfo={props.accountInfo} refreshAccountInfo={props.refreshAccountInfo} />)}
+                {props.accountInfo['created-apps'].filter(app => app.params['approval-program'].startsWith("BSAEAQAEAiYHDndpbm5pbmdfbGVuZGVyCGJvcnJvd2VyBm5md")).map(app => <AppItem  key={app.id} app={app} algodClient={props.algodClient} wallet={props.wallet} account={props.account} accountInfo={props.accountInfo} refreshAccountInfo={props.refreshAccountInfo}/>)}
             </tbody>
         </Table>
     </>);

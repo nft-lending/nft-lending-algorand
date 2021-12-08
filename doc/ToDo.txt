@@ -1,3 +1,7 @@
+Test 0:
+- List contrcts address owns
+- Destroy contract
+
 Test 1:
 - Create contract
 - List contracts in user interface

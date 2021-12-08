@@ -300,40 +300,6 @@ itxn_submit
 int 1
 return
 main_l22:
-txn NumAppArgs
-int 6
-==
-global LatestTimestamp
-txna ApplicationArgs 1
-btoi
-<
-&&
-txna ApplicationArgs 1
-btoi
-txna ApplicationArgs 2
-btoi
-<
-&&
-txna ApplicationArgs 3
-btoi
-txna ApplicationArgs 4
-btoi
-<
-&&
-txna ApplicationArgs 5
-btoi
-int 0
->=
-&&
-txna ApplicationArgs 5
-btoi
-int 10000
-<
-&&
-assert
-byte "borrower"
-txn Sender
-app_global_put
 byte "nft_id"
 txna ApplicationArgs 0
 btoi
@@ -357,9 +323,6 @@ app_global_put
 byte "min_bid_dec_f"
 txna ApplicationArgs 5
 btoi
-app_global_put
-byte "winning_lender"
-global ZeroAddress
 app_global_put
 int 1
 return

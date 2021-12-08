@@ -1,6 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css'
-import {Button} from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 
 function Account(props) {
     const [isBtnDisabled, setBtnIsDisabled] = React.useState(false)
