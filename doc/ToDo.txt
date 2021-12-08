@@ -1,4 +1,4 @@
- -Separate Creation from other opts
+- Separate 3 forms - Balaces, Borrower, Lender; or maybe Balances accordion
 - GUI for opt in (contract + NFT), setup, bid, liquidate, repay, cancel
 
 Test 0
