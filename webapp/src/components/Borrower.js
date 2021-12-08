@@ -1,7 +1,6 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
 import { Container, Row, Col, Form, Button, Card } from 'react-bootstrap'
-import Balances from './Balances'
 import algosdk from 'algosdk'
 import signSendAwait from '../util/signSendAwait'
 import * as nftloan_approval from '../teal/nftloan_approval.teal'
@@ -122,8 +121,6 @@ function Borrower(props) {
         signSendAwait(txn, props.wallet, props.algodClient, props.refreshAccountInfo)
     }
     return (<>
-        <Balances algodClient={props.algodClient} account={props.account} accountInfo={props.accountInfo} refreshAccountInfo={props.refreshAccountInfo} wallet={props.wallet} />
-
         <Container fluid="md">
             <Row>
                 <Col>
