@@ -31,12 +31,12 @@ function Borrower(props) {
 
         const params = await props.algodClient.getTransactionParams().do()
 
-        const currentBlock = (await props.algodClient.status().do())['last-round']
-console.log("Current block: " + currentBlock)
+        //const currentBlock = (await props.algodClient.status().do())['last-round']
+        const now = Date.now()
         const appArgs = [];
         appArgs.push(algosdk.encodeUint64(nftId))
-        appArgs.push(algosdk.encodeUint64(currentBlock+auctionDuration))
-        appArgs.push(algosdk.encodeUint64(currentBlock+repayDuration))
+        appArgs.push(algosdk.encodeUint64(now+auctionDuration*1000))
+        appArgs.push(algosdk.encodeUint64(now+repayDuration*1000))
         appArgs.push(algosdk.encodeUint64(Math.floor(loanAmount * 1000000)))
         appArgs.push(algosdk.encodeUint64(Math.floor(maxRepayAmount * 1000000)))
         appArgs.push(algosdk.encodeUint64(Math.floor(decrFactor*DENOMINATOR)))
@@ -49,8 +49,8 @@ console.log(appArgs)
             clearProgram,
             0,
             0,
-            8,
-            0,
+            6,
+            2,
             appArgs
         )
         //const txId = auctionContractCreateTxn.txID().toString();
@@ -65,7 +65,7 @@ console.log(appArgs)
         appArgs.push(algosdk.encodeObj("cancel"))
 console.log(appArgs)
         // create unsigned transaction
-        const txn = algosdk.makeApplicationDeleteTxn(props.account.address, params, 49809983, appArgs);
+        const txn = algosdk.makeApplicationDeleteTxn(props.account.address, params, 50005888, appArgs);
 
         signSendAwait(txn, props.wallet, props.algodClient, props.refreshAccountInfo)
     }
@@ -74,7 +74,7 @@ console.log(appArgs)
         const params = await props.algodClient.getTransactionParams().do()
 
         // create unsigned transaction
-        const txn = algosdk.makeApplicationOptInTxn(props.account.address, params, 49809983);
+        const txn = algosdk.makeApplicationOptInTxn(props.account.address, params, 49982576);
 
         signSendAwait(txn, props.wallet, props.algodClient, props.refreshAccountInfo)
     }
@@ -84,12 +84,10 @@ console.log(appArgs)
 
         // create unsigned transaction 
         // TODO: ompare to makeApplicationCloseOutTxn 
-        const txn = algosdk.makeApplicationClearStateTxn(props.account.address, params, 49809983);
+        const txn = algosdk.makeApplicationClearStateTxn(props.account.address, params, 49982576);
 
         signSendAwait(txn, props.wallet, props.algodClient, props.refreshAccountInfo)
     }
-console.log("Borrower wallet")
-console.log(props.wallet)
     return (<>
         <Balances algodClient={props.algodClient} account={props.account} accountInfo={props.accountInfo} refreshAccountInfo={props.refreshAccountInfo} wallet={props.wallet} />
 
@@ -118,12 +116,12 @@ console.log(props.wallet)
                     </Form.Group>
 
                     <Form.Group className="mb-3">
-                        <Form.Label>Auction Duration (blocks)</Form.Label>
+                        <Form.Label>Auction Duration (seconds)</Form.Label>
                         <Form.Control type="number" onChange={e => setAuctionDuration(parseInt(e.target.value))} placeholder="10" />
                     </Form.Group>
 
                     <Form.Group className="mb-3">
-                        <Form.Label>Repaymen Duration (blocks)</Form.Label>
+                        <Form.Label>Repaymen Duration (seconds)</Form.Label>
                         <Form.Control type="number" onChange={e => setRepayDuration(parseInt(e.target.value))} placeholder="50" />
                     </Form.Group>
 

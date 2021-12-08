@@ -5,8 +5,6 @@ import Asset from './Asset'
 import AppItem from './AppItem'
 
 function Balances(props) {
-console.log("Balances wallet")
-console.log(props.wallet)
         return (<>
         <Table striped bordered hover>
             <thead>

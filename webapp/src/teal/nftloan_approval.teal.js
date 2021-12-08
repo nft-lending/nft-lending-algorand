@@ -2,7 +2,7 @@ const TealCode = `#pragma version 5
 txn ApplicationID
 int 0
 ==
-bnz main_l22
+bnz main_l24
 txn OnCompletion
 int NoOp
 ==
@@ -35,38 +35,9 @@ bnz main_l12
 txna ApplicationArgs 0
 byte "repay"
 ==
-bnz main_l11
-txna ApplicationArgs 0
-byte "liquidate"
-==
-bnz main_l10
+bnz main_l9
 err
-main_l10:
-txn NumAppArgs
-int 1
-==
-txn Sender
-byte "winning_lender"
-app_global_get
-==
-&&
-global LatestTimestamp
-byte "repay_deadline"
-app_global_get
->
-&&
-assert
-byte "nft_id"
-app_global_get
-byte "winning_lender"
-app_global_get
-callsub sub0
-byte "borrower"
-app_global_get
-callsub sub1
-int 1
-return
-main_l11:
+main_l9:
 txn NumAppArgs
 int 1
 ==
@@ -92,6 +63,15 @@ app_global_get
 >=
 &&
 assert
+global CurrentApplicationAddress
+balance
+byte "repay_amount"
+app_global_get
+global MinTxnFee
++
+>
+bnz main_l11
+main_l10:
 byte "nft_id"
 app_global_get
 byte "borrower"
@@ -102,6 +82,23 @@ app_global_get
 callsub sub1
 int 1
 return
+main_l11:
+itxn_begin
+int pay
+itxn_field TypeEnum
+global CurrentApplicationAddress
+balance
+byte "repay_amount"
+app_global_get
+-
+global MinTxnFee
+-
+itxn_field Amount
+byte "borrower"
+app_global_get
+itxn_field Receiver
+itxn_submit
+b main_l10
 main_l12:
 txn NumAppArgs
 int 1
@@ -131,17 +128,49 @@ main_l13:
 txna ApplicationArgs 0
 byte "start_auction"
 ==
-bnz main_l21
+bnz main_l23
 txna ApplicationArgs 0
 byte "bid"
 ==
-bnz main_l18
+bnz main_l20
 txna ApplicationArgs 0
 byte "borrow"
 ==
-bnz main_l17
+bnz main_l19
+txna ApplicationArgs 0
+byte "liquidate"
+==
+bnz main_l18
 err
-main_l17:
+main_l18:
+txn NumAppArgs
+int 1
+==
+txn Sender
+byte "winning_lender"
+app_global_get
+==
+&&
+global LatestTimestamp
+byte "repay_deadline"
+app_global_get
+>
+&&
+assert
+byte "nft_id"
+app_global_get
+byte "winning_lender"
+app_global_get
+callsub sub0
+byte "borrower"
+app_global_get
+callsub sub1
+byte "winning_lender"
+global ZeroAddress
+app_global_put
+int 1
+return
+main_l19:
 txn NumAppArgs
 int 1
 ==
@@ -165,7 +194,7 @@ itxn_field Receiver
 itxn_submit
 int 1
 return
-main_l18:
+main_l20:
 global CurrentApplicationAddress
 byte "nft_id"
 app_global_get
@@ -250,8 +279,8 @@ byte "winning_lender"
 app_global_get
 global ZeroAddress
 !=
-bnz main_l20
-main_l19:
+bnz main_l22
+main_l21:
 byte "repay_amount"
 txna ApplicationArgs 1
 btoi
@@ -264,7 +293,7 @@ gtxns Sender
 app_global_put
 int 1
 return
-main_l20:
+main_l22:
 itxn_begin
 int pay
 itxn_field TypeEnum
@@ -277,8 +306,8 @@ byte "winning_lender"
 app_global_get
 itxn_field Receiver
 itxn_submit
-b main_l19
-main_l21:
+b main_l21
+main_l23:
 txn NumAppArgs
 int 1
 ==
@@ -299,7 +328,41 @@ itxn_field AssetReceiver
 itxn_submit
 int 1
 return
-main_l22:
+main_l24:
+txn NumAppArgs
+int 6
+==
+global LatestTimestamp
+txna ApplicationArgs 1
+btoi
+<
+&&
+txna ApplicationArgs 1
+btoi
+txna ApplicationArgs 2
+btoi
+<
+&&
+txna ApplicationArgs 3
+btoi
+txna ApplicationArgs 4
+btoi
+<
+&&
+txna ApplicationArgs 5
+btoi
+int 0
+>=
+&&
+txna ApplicationArgs 5
+btoi
+int 10000
+<
+&&
+assert
+byte "borrower"
+txn Sender
+app_global_put
 byte "nft_id"
 txna ApplicationArgs 0
 btoi
@@ -323,6 +386,9 @@ app_global_put
 byte "min_bid_dec_f"
 txna ApplicationArgs 5
 btoi
+app_global_put
+byte "winning_lender"
+global ZeroAddress
 app_global_put
 int 1
 return
