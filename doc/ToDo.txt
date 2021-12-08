@@ -1,12 +1,8 @@
-Test 0:
-- List contrcts address owns
-- Destroy contract
+ -Separate Creation from other opts
+- GUI for opt in (contract + NFT), setup, bid, liquidate, repay, cancel
 
-Test 1:
-- Create contract
-- List contracts in user interface
-- Try to delete contract
+Test 0
+- Destroy contract - when not funded it needs extra funding
 
 Test 2:
-- Opt in all accounts into NFT and contract
 - Test auction
