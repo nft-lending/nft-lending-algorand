@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import { Form, Button, Card } from 'react-bootstrap'
 import Balances from './Balances'
 import algosdk from 'algosdk'
-import CodeTeal from '../teal/nftloan_approval.teal'
+import { waitForConfirmation } from '../imported/waitForConfirmation'
 import * as nftloan_approval from '../teal/nftloan_approval.teal'
 import * as nftloan_clear_state from '../teal/nftloan_clear_state.teal'
 
@@ -33,10 +33,6 @@ function Borrower(props) {
 
         const currentBlock = (await props.algodClient.status().do())['last-round']
 
-console.log(nftId)
-console.log(typeof nftId)
-console.log(decrFactor)        
-console.log(typeof decrFactor)
         const appArgs = [];
         appArgs.push(algosdk.encodeUint64(nftId))
         appArgs.push(algosdk.encodeUint64(currentBlock+auctionDuration))
@@ -44,8 +40,7 @@ console.log(typeof decrFactor)
         appArgs.push(algosdk.encodeUint64(Math.floor(loanAmount * 1000000)))
         appArgs.push(algosdk.encodeUint64(Math.floor(maxRepayAmount * 1000000)))
         appArgs.push(algosdk.encodeUint64(Math.floor(decrFactor*DENOMINATOR)))
-console.log("App args:")
-console.log(appArgs)
+
         const auctionContractCreateTxn = algosdk.makeApplicationCreateTxn(
             props.account.address,
             params,
@@ -61,13 +56,17 @@ console.log(appArgs)
         const txId = auctionContractCreateTxn.txID().toString();
         const signedTxn = await props.wallet.signTransaction(auctionContractCreateTxn.toByte())
 console.log("Signed")
-        const txnid = await props.algodClient.sendRawTransaction(signedTxn.blob).do()
+        const txnid = 0 //const txnid = await props.algodClient.sendRawTransaction(signedTxn.blob).do()
 console.log("Sent")
-        const confirmedTxn = await algosdk.waitForConfirmation(props.algodClient, txnid).do();
-        console.log("Transaction " + txId + " confirmed in round " + confirmedTxn["confirmed-round"]);
+console.log(props)
+console.log(algosdk)
+        try {
+            const confirmedTxn = await waitForConfirmation(props.algodClient, txnid, 3)
+            console.log("Transaction " + txId + " confirmed in round " + confirmedTxn["confirmed-round"]);
 console.log("confirmedTxn")
 console.log(confirmedTxn)
-        setApplicationIndex(confirmedTxn.applicationIndex)
+            setApplicationIndex(confirmedTxn.applicationIndex)
+        } catch (e) {console.log(e); window.alert("Not confirmed in 3 rounds.") }
     }
 
     return (<>

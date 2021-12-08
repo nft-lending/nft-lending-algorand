@@ -19,7 +19,7 @@ function Balances(props) {
                 <td></td>
                 <td>{props.accountInfo.amount / 1000000.0}</td>
                 </tr>
-                {props.accountInfo.assets.filter(asset => asset.amount>0).map(asset => <Asset key={asset} asset={asset} algodClient={props.algodClient}/>)}
+                {props.accountInfo.assets.filter(asset => asset.amount>=0).map(asset => <Asset key={asset} asset={asset} algodClient={props.algodClient}/>)}
             </tbody>
         </Table>
     </>);
