@@ -5,6 +5,7 @@ import algosdk from 'algosdk'
 import signSendAwait from '../util/signSendAwait'
 import * as nftloan_approval from '../teal/nftloan_approval.teal'
 import * as nftloan_clear_state from '../teal/nftloan_clear_state.teal'
+import AuctionInfo from './AuctionInfo'
 
 function Borrower(props) {
     const DENOMINATOR = 10000
@@ -125,7 +126,7 @@ function Borrower(props) {
             <Row>
                 <Col>
                     <Card border="primary" style={{ width: '18rem' }}>
-                        <Card.Header>Auction:</Card.Header>
+                        <Card.Header>Create Auction:</Card.Header>
                         <Card.Body>
                             <Form>
                                 <Form.Group className="mb-3">
@@ -166,9 +167,11 @@ function Borrower(props) {
                     </Card>
                 </Col>
                 <Col>
-                    <Card border="primary" style={{ width: '18rem' }}>
+                    <Card border="primary" style={{ width: '40rem' }}>
                         <Card.Header>Auction: {applicationIndex}</Card.Header>
                         <Card.Body>
+                            <AuctionInfo auctionID={applicationIndex} algodClient={props.algodClient} />
+
                             <Form>
                                 <Form.Group className="mb-3">
                                     <Form.Label>Auction ID</Form.Label>
