@@ -67,7 +67,7 @@ function Lender(props) {
                     <OptInAsset algodClient={props.algodClient} account={props.account} wallet={props.wallet} refreshAccountInfo={props.refreshAccountInfo} />
                 </Col>
                 <Col>
-                    <Card border="primary" style={{ width: '18rem' }}>
+                    <Card border="primary" style={{ width: '40rem' }}>
                         <Card.Header>Auction: {appID}</Card.Header>
                         <Card.Body>
                             <AuctionInfo auctionID={appID} algodClient={props.algodClient} refresh={refreshAuctionInfo} />
