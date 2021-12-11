@@ -11,9 +11,9 @@ function OptInAsset(props) {
         const params = await props.algodClient.getTransactionParams().do()
 
         // create unsigned transaction
-        let txn = algosdk.makeAssetTransferTxnWithSuggestedParams(props.account.address, props.account.address, undefined, undefined, 0, undefined, assetId, params);
+        let txn = algosdk.makeAssetTransferTxnWithSuggestedParams(props.account.address, props.account.address, undefined, undefined, 0, undefined, assetId, params)
 
-        await signSendAwait(txn, props.wallet, props.algodClient, props.refreshAccountInfo)
+        await signSendAwait([txn], props.wallet, props.algodClient, props.refreshAccountInfo)
     }
 
     return (<>

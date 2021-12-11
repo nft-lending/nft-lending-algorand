@@ -20,7 +20,7 @@ console.log(assetInfo)
         // create unsigned transaction
         const txn = algosdk.makeAssetTransferTxnWithSuggestedParams(props.account.address, props.account.address, assetInfo.params.creator, undefined, 0, undefined, props.asset['asset-id'], params);
         //makeApplicationClearStateTxn(props.account.address, params, props.asset['asset-id']);
-        await signSendAwait(txn, props.wallet, props.algodClient, props.refreshAccountInfo)
+        await signSendAwait([txn], props.wallet, props.algodClient, props.refreshAccountInfo)
     }
 
     if (!assetInfo) return(<></>);

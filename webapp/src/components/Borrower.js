@@ -15,7 +15,7 @@ function Borrower(props) {
     const [decrFactor, setdecrFactor] = React.useState(0.9)
     const [auctionDuration, setAuctionDuration] = React.useState(10)
     const [repayDuration, setRepayDuration] = React.useState(50)
-    const [applicationIndex, setApplicationIndex] = React.useState(0)
+    const [appID, setAppID] = React.useState(0)
     const [refreshAuctionInfo, setRefreshAuctionInfo] = React.useState(0)
     const doRefreshAuctionInfo = () => { setRefreshAuctionInfo(Math.random()) }
 
@@ -56,26 +56,35 @@ function Borrower(props) {
             appArgs
         )
         //const txId = auctionContractCreateTxn.txID().toString();
-        const confirmedTxn = signSendAwait(txn, props.wallet, props.algodClient, props.refreshAccountInfo)
+        const confirmedTxn = signSendAwait([txn], props.wallet, props.algodClient, props.refreshAccountInfo)
         if (confirmedTxn) {
-            console.log("Created aucton: " + confirmedTxn.applicationIndex)
-            window.alert("Created auction: " + confirmedTxn.applicationIndex)
+            console.log("Created aucton: " + confirmedTxn.appID)
+            window.alert("Created auction: " + confirmedTxn.appID)
         }
     }
 
     const onStartAuction = async () => {
         const params = await props.algodClient.getTransactionParams().do()
 
+        const appAddr = await props.algodClient.getApplicationAddress(appID).do()
+        const app = await props.algodClient.getApplicationByID(props.auctionID).do()
+        const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
+
+        // Fund contract with 100k min balance + 100k NFT opt-in + 3 * min tx fee
+        const fundTx = algosdk.makePaymentTxnWithSuggestedParams(
+            props.account.address, appAddr, 203000, 
+            undefined, undefined, params)
+
+
         const appArgs = [];
         appArgs.push(algosdk.encodeObj("start"))
+        const startTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs)
 
-        // Create block with payments
+        const nftDepositTx = algosdk.makeAssetTransferTxnWithSuggestedParams(
+            props.account.address, appAddr, 
+            undefined, undefined, 1, undefined, nftID, params)
 
-        // create unsigned transaction
-        // !!!TODO: modify this
-        const txn = algosdk.makeApplicationDeleteTxn(props.account.address, params, applicationIndex, appArgs);
-
-        signSendAwait(txn, props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() } )
+        signSendAwait([fundTx, startTx, nftDepositTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
 
     const onCancelAuction = async () => {
@@ -85,9 +94,9 @@ function Borrower(props) {
         appArgs.push(algosdk.encodeObj("cancel"))
 
         // create unsigned transaction
-        const txn = algosdk.makeApplicationDeleteTxn(props.account.address, params, applicationIndex, appArgs);
+        const txn = algosdk.makeApplicationDeleteTxn(props.account.address, params, appID, appArgs);
 
-        signSendAwait(txn, props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
+        signSendAwait([txn], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
 
     const onRepayAuction = async () => {
@@ -100,18 +109,18 @@ function Borrower(props) {
         appArgs.push(algosdk.encodeObj("repay"))
 
         // create unsigned transaction
-        const txn = algosdk.makeApplicationDeleteTxn(props.account.address, params, applicationIndex, appArgs);
+        const txn = algosdk.makeApplicationDeleteTxn(props.account.address, params, appID, appArgs);
 
-        signSendAwait(txn, props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
+        signSendAwait([txn], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
 
     const onOptIn = async () => {
         const params = await props.algodClient.getTransactionParams().do()
 
         // create unsigned transaction
-        const txn = algosdk.makeApplicationOptInTxn(props.account.address, params, applicationIndex);
+        const txn = algosdk.makeApplicationOptInTxn(props.account.address, params, appID);
 
-        signSendAwait(txn, props.wallet, props.algodClient, props.refreshAccountInfo)
+        signSendAwait([txn], props.wallet, props.algodClient, props.refreshAccountInfo)
     }
 
     const onClearAuction = async () => {
@@ -119,9 +128,9 @@ function Borrower(props) {
 
         // create unsigned transaction 
         // TODO: ompare to makeApplicationCloseOutTxn 
-        const txn = algosdk.makeApplicationClearStateTxn(props.account.address, params, applicationIndex);
+        const txn = algosdk.makeApplicationClearStateTxn(props.account.address, params, appID);
 
-        signSendAwait(txn, props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
+        signSendAwait([txn], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
     return (<>
         <Container fluid="md">
@@ -170,14 +179,14 @@ function Borrower(props) {
                 </Col>
                 <Col>
                     <Card border="primary" style={{ width: '40rem' }}>
-                        <Card.Header>Auction: {applicationIndex}</Card.Header>
+                        <Card.Header>Auction: {appID}</Card.Header>
                         <Card.Body>
-                            <AuctionInfo auctionID={applicationIndex} algodClient={props.algodClient} refresh={refreshAuctionInfo} />
+                            <AuctionInfo auctionID={appID} algodClient={props.algodClient} refresh={refreshAuctionInfo} />
 
                             <Form>
                                 <Form.Group className="mb-3">
                                     <Form.Label>Auction ID</Form.Label>
-                                    <Form.Control type="number" onChange={e => setApplicationIndex(parseInt(e.target.value))} placeholder="49055308" />
+                                    <Form.Control type="number" onChange={e => setAppID(parseInt(e.target.value))} placeholder="49055308" />
                                 </Form.Group>
 
                                 <Button variant="primary" onClick={onStartAuction}>
