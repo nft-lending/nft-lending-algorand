@@ -75,7 +75,6 @@ function Borrower(props) {
             props.account.address, appAddr, 203000, 
             undefined, undefined, params)
 
-
         const appArgs = [];
         appArgs.push(algosdk.encodeObj("start"))
         const startTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs)
@@ -90,30 +89,40 @@ function Borrower(props) {
     const onCancelAuction = async () => {
         const params = await props.algodClient.getTransactionParams().do()
 
+        const appAddr = await props.algodClient.getApplicationAddress(appID).do()
+
+        // Fund contract with 100k NFT return + 3 * min tx fee
+        const fundTx = algosdk.makePaymentTxnWithSuggestedParams(
+            props.account.address, appAddr, 103000, 
+            undefined, undefined, params)
+
         const appArgs = [];
         appArgs.push(algosdk.encodeObj("cancel"))
+        const cancelTx = algosdk.makeApplicationDeleteTxn(props.account.address, params, appID, appArgs)
 
-        // create unsigned transaction
-        const txn = algosdk.makeApplicationDeleteTxn(props.account.address, params, appID, appArgs);
-
-        signSendAwait([txn], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
+        signSendAwait([fundTx, cancelTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
 
     const onRepayAuction = async () => {
         const params = await props.algodClient.getTransactionParams().do()
 
+        const appAddr = await props.algodClient.getApplicationAddress(appID).do()
+        const app = await props.algodClient.getApplicationByID(props.auctionID).do()
+        const repayAmount = app.params['global-state'].find(p => atob(p.key) === "repay_amount").value.uint
+
+        // Fund contract with 100k NFT return + 3 * min tx fee
+        const fundTx = algosdk.makePaymentTxnWithSuggestedParams(
+            props.account.address, appAddr, 103000 + repayAmount, 
+            undefined, undefined, params)
+
         const appArgs = [];
-
-        // TODO: add payment transactions
-
         appArgs.push(algosdk.encodeObj("repay"))
+        const repayTx = algosdk.makeApplicationDeleteTxn(props.account.address, params, appID, appArgs)
 
-        // create unsigned transaction
-        const txn = algosdk.makeApplicationDeleteTxn(props.account.address, params, appID, appArgs);
-
-        signSendAwait([txn], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
+        signSendAwait([fundTx, repayTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
 
+    /* Not needed - contract has no local state
     const onOptIn = async () => {
         const params = await props.algodClient.getTransactionParams().do()
 
@@ -122,12 +131,13 @@ function Borrower(props) {
 
         signSendAwait([txn], props.wallet, props.algodClient, props.refreshAccountInfo)
     }
+    */
 
     const onClearAuction = async () => {
         const params = await props.algodClient.getTransactionParams().do()
 
         // create unsigned transaction 
-        // TODO: ompare to makeApplicationCloseOutTxn 
+        // TODO: compare to makeApplicationCloseOutTxn 
         const txn = algosdk.makeApplicationClearStateTxn(props.account.address, params, appID);
 
         signSendAwait([txn], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
@@ -191,10 +201,6 @@ function Borrower(props) {
 
                                 <Button variant="primary" onClick={onStartAuction}>
                                     Start auction
-                                </Button>
-                                <br/><br/>
-                                <Button variant="primary" onClick={onOptIn}>
-                                    Opt In (no need)
                                 </Button>
                                 <br/><br/>
                                 <Button variant="primary" onClick={onClearAuction}>
