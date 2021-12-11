@@ -1,6 +1,6 @@
 import { waitForConfirmation } from "./waitForConfirmation"
 
-const signSendAwait = async (txn, wallet, algodClient, refreshAccountInfo) => {
+const signSendAwait = async (txn, wallet, algodClient, onSuccess) => {
     try {
         const signedTxn = await wallet.signTransaction(txn.toByte())
         try {
@@ -8,7 +8,7 @@ const signSendAwait = async (txn, wallet, algodClient, refreshAccountInfo) => {
             try {
                 const confirmedTxn = await waitForConfirmation(algodClient, txId, 3)
                 console.log("Transaction " + txId + " confirmed in round " + confirmedTxn["confirmed-round"]);
-                refreshAccountInfo()
+                onSuccess()
                 return(confirmedTxn)
             } catch (e) {
                 console.log(e); 
