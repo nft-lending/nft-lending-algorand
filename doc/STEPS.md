@@ -16,8 +16,6 @@
 
 * Install pipenv: sudo apt install python3 python3-pip python-is-python3 pipenv
 
-* Install AlgoBuilder: https://github.com/scale-it/algo-builder
-
 ## Auction Demo program study
 
 * This explains how to:

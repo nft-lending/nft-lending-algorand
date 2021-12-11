@@ -1,0 +1,9 @@
+- Gui for contract status and data
+- Investigate if there is a callback for contract data change
+- GUI for opt in (contract(no needed as it does not have local state) + NFT), setup, bid, liquidate, repay, cancel, cancel-before-setup(why?)
+
+Test 0
+- Destroy contract - when not funded it needs extra funding
+
+Test 2:
+- Test auction

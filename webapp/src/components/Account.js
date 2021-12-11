@@ -1,6 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css'
-import {Button} from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 
 function Account(props) {
     const [isBtnDisabled, setBtnIsDisabled] = React.useState(false)
@@ -14,7 +14,7 @@ function Account(props) {
     }
 
     return (<>
-        {props.account?"Account: " + props.account.address:<Button variant="light" disabled={isBtnDisabled} onClick={onClick}>Connect</Button>}
+        {props.account?"Account: " + props.account.address:<Button variant="primary" disabled={isBtnDisabled} onClick={onClick}>Connect</Button>}
     </>);
 }
 

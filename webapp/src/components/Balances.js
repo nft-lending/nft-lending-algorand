@@ -1,22 +1,11 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
-import {Table,Form,InputGroup,FormControl} from 'react-bootstrap'
+import {Table} from 'react-bootstrap'
 import Asset from './Asset'
+import AppItem from './AppItem'
 
 function Balances(props) {
-    const [accountInfo, setAccountInfo] = React.useState(false)
-    const [infoNFT, setInfoNFT] = React.useState("")
-
-    React.useEffect(() => {
-        const fetchAccountInfo = async () => {
-            const accountInfo = await props.algodClient.accountInformation(props.account.address).do();
-            setAccountInfo(accountInfo);
-        }
-        fetchAccountInfo()
-    }, [props.account, props.algodClient]);
-    
-    if (!accountInfo) return(<>Please connect.</>)
-    return (<>
+        return (<>
         <Table striped bordered hover>
             <thead>
                 <tr>
@@ -29,9 +18,10 @@ function Balances(props) {
                 <tr>
                 <td>Algo</td>
                 <td></td>
-                <td>{accountInfo.amount / 1000000.0}</td>
+                <td>{props.accountInfo.amount / 1000000.0}</td>
                 </tr>
-                {accountInfo.assets.filter(asset => asset.amount>0).map(asset => <Asset asset={asset} algodClient={props.algodClient}/>)}
+                {props.accountInfo.assets.filter(asset => asset.amount>=0).map(asset => <Asset key={asset['asset-id']} asset={asset} algodClient={props.algodClient} wallet={props.wallet} account={props.account} accountInfo={props.accountInfo} refreshAccountInfo={props.refreshAccountInfo} />)}
+                {props.accountInfo['created-apps'].filter(app => app.params['approval-program'].startsWith("BSAEAQAEAiYHDndpbm5pbmdfbGVuZGVyCGJvcnJvd2VyBm5md")).map(app => <AppItem  key={app.id} app={app} algodClient={props.algodClient} wallet={props.wallet} account={props.account} accountInfo={props.accountInfo} refreshAccountInfo={props.refreshAccountInfo}/>)}
             </tbody>
         </Table>
     </>);
