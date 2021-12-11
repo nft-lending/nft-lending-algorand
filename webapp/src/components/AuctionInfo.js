@@ -7,7 +7,9 @@ function AuctionInfo(props) {
 
     React.useEffect(() => {
         (async () => {
-            setApp(await props.algodClient.getApplicationByID(props.auctionID).do())
+            try {
+                setApp(await props.algodClient.getApplicationByID(props.auctionID).do())
+            } catch (_) { setApp(null) }
         }) ()
     }, [props.algodClient, props.auctionID, props.refresh])
 
@@ -26,7 +28,7 @@ function AuctionInfo(props) {
         repay_deadline
     */
 
-    if (!app) return(<></>)
+    if (!app) return(<>Enter a valid Auction ID!</>)
     try {
     return (<>
         <Table striped bordered hover>
@@ -66,7 +68,7 @@ function AuctionInfo(props) {
             </tbody>
         </Table>
     </>)
-    } catch(_) { return(<>Contract/application is not a valid Auction</>) }
+    } catch(_) { return(<>Contract with given ID is not a valid Auction</>) }
 }
 
 export default AuctionInfo;
