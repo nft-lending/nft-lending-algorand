@@ -6,11 +6,11 @@ import algosdk from 'algosdk'
 function AuctionInfo(props) {
     const [app, setApp] = React.useState();
 
-    const refreshApp = React.useEffect(() => {
+    React.useEffect(() => {
         (async () => {
             setApp(await props.algodClient.getApplicationByID(props.auctionID).do())
         }) ()
-    }, [props.auctionID])
+    }, [props.algodClient, props.auctionID, props.refresh])
 
     function findParam(pname, gsparams) {
         for (const p of gsparams) {
@@ -21,15 +21,15 @@ function AuctionInfo(props) {
         return null;
     }
 
-    /*
-        min_bid_dec_f	ZZZ
-        nft_id	ZZZ
-        auction_end	ZZZ
-        winning_lender	ZZZ
-        borrower	ZZZ
-        loan_amount	ZZZ
-        repay_amount	ZZZ
-        repay_deadline	ZZZ
+    /*  Param names:
+        min_bid_dec_f
+        nft_id
+        auction_end
+        winning_lender
+        borrower
+        loan_amount
+        repay_amount
+        repay_deadline
     */
 
     if (!app) return(<></>)

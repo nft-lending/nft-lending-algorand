@@ -16,6 +16,8 @@ function Borrower(props) {
     const [auctionDuration, setAuctionDuration] = React.useState(10)
     const [repayDuration, setRepayDuration] = React.useState(50)
     const [applicationIndex, setApplicationIndex] = React.useState(0)
+    const [refreshAuctionInfo, setRefreshAuctionInfo] = React.useState(0)
+    const doRefreshAuctionInfo = () => { setRefreshAuctionInfo(Math.random()) }
 
     const compileProgram = async programSource => {
             const encoder = new TextEncoder();
@@ -73,7 +75,7 @@ function Borrower(props) {
         // !!!TODO: modify this
         const txn = algosdk.makeApplicationDeleteTxn(props.account.address, params, applicationIndex, appArgs);
 
-        signSendAwait(txn, props.wallet, props.algodClient, props.refreshAccountInfo)
+        signSendAwait(txn, props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() } )
     }
 
     const onCancelAuction = async () => {
@@ -85,7 +87,7 @@ function Borrower(props) {
         // create unsigned transaction
         const txn = algosdk.makeApplicationDeleteTxn(props.account.address, params, applicationIndex, appArgs);
 
-        signSendAwait(txn, props.wallet, props.algodClient, props.refreshAccountInfo)
+        signSendAwait(txn, props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
 
     const onRepayAuction = async () => {
@@ -100,7 +102,7 @@ function Borrower(props) {
         // create unsigned transaction
         const txn = algosdk.makeApplicationDeleteTxn(props.account.address, params, applicationIndex, appArgs);
 
-        signSendAwait(txn, props.wallet, props.algodClient, props.refreshAccountInfo)
+        signSendAwait(txn, props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
 
     const onOptIn = async () => {
@@ -119,7 +121,7 @@ function Borrower(props) {
         // TODO: ompare to makeApplicationCloseOutTxn 
         const txn = algosdk.makeApplicationClearStateTxn(props.account.address, params, applicationIndex);
 
-        signSendAwait(txn, props.wallet, props.algodClient, props.refreshAccountInfo)
+        signSendAwait(txn, props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
     return (<>
         <Container fluid="md">
@@ -170,7 +172,7 @@ function Borrower(props) {
                     <Card border="primary" style={{ width: '40rem' }}>
                         <Card.Header>Auction: {applicationIndex}</Card.Header>
                         <Card.Body>
-                            <AuctionInfo auctionID={applicationIndex} algodClient={props.algodClient} />
+                            <AuctionInfo auctionID={applicationIndex} algodClient={props.algodClient} refresh={refreshAuctionInfo} />
 
                             <Form>
                                 <Form.Group className="mb-3">
