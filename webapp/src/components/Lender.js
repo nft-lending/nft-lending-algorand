@@ -47,6 +47,8 @@ function Lender(props) {
         const params = await props.algodClient.getTransactionParams().do()
 
         const appAddr = algosdk.getApplicationAddress(appID)
+        const app = await props.algodClient.getApplicationByID(appID).do()
+        const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
 
         // Fund contract with 100k repay borrower if any + 100k NFT return + 3 * min tx fee
         const fundTx = algosdk.makePaymentTxnWithSuggestedParams(
@@ -55,7 +57,7 @@ function Lender(props) {
 
         const appArgs = [];
         appArgs.push(new Uint8Array(Buffer.from("liquidate")))
-        const liquidateTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs)
+        const liquidateTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs, undefined, undefined, [nftID])
 
         await signSendAwait([fundTx, liquidateTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
