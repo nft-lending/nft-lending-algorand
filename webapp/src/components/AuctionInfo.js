@@ -30,7 +30,6 @@ function AuctionInfo(props) {
 
     if (!app) return(<>Enter a valid Auction ID!</>)
     try {
-console.log(app)
     return (<>
         <Table striped bordered hover>
             <tbody>
@@ -52,11 +51,11 @@ console.log(app)
                 </tr>
                 <tr>
                     <td>Auction End</td>
-                    <td>{Date(findParam("auction_end",app).uint)}</td>
+                    <td>{new Date(findParam("auction_end",app).uint).toString()}</td>
                 </tr>
                 <tr>
                     <td>Repayment Deadline</td>
-                    <td>{Date(findParam("repay_deadline",app).uint)}</td>
+                    <td>{new Date(findParam("repay_deadline",app).uint).toString()}</td>
                 </tr>
                 <tr>
                     <td>Borrower</td>

@@ -57,10 +57,10 @@ function Borrower(props) {
         )
         //const txId = auctionContractCreateTxn.txID().toString();
         const confirmedTxn = await signSendAwait([txn], props.wallet, props.algodClient, props.refreshAccountInfo)
-        if (confirmedTxn) {
-            console.log("Created aucton: " + confirmedTxn.appID)
-            window.alert("Created auction: " + confirmedTxn.appID)
-        }
+        //if (confirmedTxn) {
+        //    console.log("Created aucton: " + confirmedTxn.appID)
+        //    window.alert("Created auction: " + confirmedTxn.appID)
+        //}
     }
 
     const onStartAuction = async () => {
@@ -69,23 +69,19 @@ function Borrower(props) {
         const appAddr = algosdk.getApplicationAddress(appID)
         const app = await props.algodClient.getApplicationByID(appID).do()
         const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
-console.log("funding tx setup")
         // Fund contract with 100k min balance + 100k NFT opt-in + 3 * min tx fee
         const fundTx = algosdk.makePaymentTxnWithSuggestedParams(
             props.account.address, appAddr, 203000, 
             undefined, undefined, params)
 
-console.log("app call setup")
         const appArgs = [];
-        appArgs.push(algosdk.encodeObj("start"))
+        appArgs.push(new Uint8Array(Buffer.from("start_auction")))
         const startTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs)
 
-console.log("nft xfer setup")
         const nftDepositTx = algosdk.makeAssetTransferTxnWithSuggestedParams(
             props.account.address, appAddr, 
             undefined, undefined, 1, undefined, nftID, params)
 
-console.log("sending...")
             await signSendAwait([fundTx, startTx, nftDepositTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
 
@@ -100,7 +96,7 @@ console.log("sending...")
             undefined, undefined, params)
 
         const appArgs = [];
-        appArgs.push(algosdk.encodeObj("cancel"))
+        appArgs.push(new Uint8Array(Buffer.from("cancel")))
         const cancelTx = algosdk.makeApplicationDeleteTxn(props.account.address, params, appID, appArgs)
 
         await signSendAwait([fundTx, cancelTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
@@ -119,7 +115,7 @@ console.log("sending...")
             undefined, undefined, params)
 
         const appArgs = [];
-        appArgs.push(algosdk.encodeObj("repay"))
+        appArgs.push(new Uint8Array(Buffer.from("repay")))
         const repayTx = algosdk.makeApplicationDeleteTxn(props.account.address, params, appID, appArgs)
 
         await signSendAwait([fundTx, repayTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })

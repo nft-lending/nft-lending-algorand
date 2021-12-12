@@ -36,7 +36,7 @@ function Lender(props) {
             undefined, undefined, params)
 
         const appArgs = [];
-        appArgs.push(algosdk.encodeObj("bid"))
+        appArgs.push(new Uint8Array(Buffer.from("bid")))
         appArgs.push(algosdk.encodeUint64(Math.floor(repaymentAmount * 1000000)))
         const bidTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs)
 
@@ -54,7 +54,7 @@ function Lender(props) {
             undefined, undefined, params)
 
         const appArgs = [];
-        appArgs.push(algosdk.encodeObj("liquidate"))
+        appArgs.push(new Uint8Array(Buffer.from("liquidate")))
         const liquidateTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs)
 
         await signSendAwait([fundTx, liquidateTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
