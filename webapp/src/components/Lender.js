@@ -13,13 +13,13 @@ function Lender(props) {
     const doRefreshAuctionInfo = () => { setRefreshAuctionInfo(Math.random()) }
 
     const onBid = async () => {
-        const params = await props.algodClient.getTransactionParams().do()
-
-        const appAddr = algosdk.getApplicationAddress(appID)
-        const app = await props.algodClient.getApplicationByID(appID).do()
+        const app = await props.algodClient.getApplicationByID(appID).do().catch((_) => { return undefined })
+        if (app === undefined) { window.alert("Auction does not exist."); return }
         const loanAmount = app.params['global-state'].find(p => atob(p.key) === "loan_amount").value.uint
         const currentRepayAmount = app.params['global-state'].find(p => atob(p.key) === "repay_amount").value.uint
         const minBidDec = app.params['global-state'].find(p => atob(p.key) === "min_bid_dec_f").value.uint
+        const params = await props.algodClient.getTransactionParams().do()
+        const appAddr = algosdk.getApplicationAddress(appID)
 
         if (Math.floor(repaymentAmount * 1000000) < loanAmount ||
             Math.floor(repaymentAmount * 1000000) > minBidDec * currentRepayAmount / 10000) {
@@ -44,11 +44,11 @@ function Lender(props) {
     }
 
     const onLiquidate = async () => {
-        const params = await props.algodClient.getTransactionParams().do()
-
-        const appAddr = algosdk.getApplicationAddress(appID)
-        const app = await props.algodClient.getApplicationByID(appID).do()
+        const app = await props.algodClient.getApplicationByID(appID).do().catch((_) => { return undefined })
+        if (app === undefined) { window.alert("Auction does not exist."); return }
         const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
+        const params = await props.algodClient.getTransactionParams().do()
+        const appAddr = algosdk.getApplicationAddress(appID)
 
         // Fund contract with 100k repay borrower if any + 100k NFT return + 3 * min tx fee
         const fundTx = algosdk.makePaymentTxnWithSuggestedParams(
