@@ -21,7 +21,7 @@ function Balances(props) {
                 <td>{props.accountInfo.amount / 1000000.0}</td>
                 </tr>
                 {props.accountInfo.assets.filter(asset => asset.amount>=0).map(asset => <Asset key={asset['asset-id']} asset={asset} algodClient={props.algodClient} wallet={props.wallet} account={props.account} accountInfo={props.accountInfo} refreshAccountInfo={props.refreshAccountInfo} />)}
-                {props.accountInfo['created-apps'].filter(app => app.params['approval-program'].startsWith("BSAEAQAEAiYHDndpbm5pbmdfbGVuZGVyCGJvcnJvd2VyBm5md")).map(app => <AppItem  key={app.id} app={app} algodClient={props.algodClient} wallet={props.wallet} account={props.account} accountInfo={props.accountInfo} refreshAccountInfo={props.refreshAccountInfo}/>)}
+                {props.accountInfo['created-apps'].filter(app => app.params['approval-program'].startsWith("")).map(app => <AppItem  key={app.id} app={app} algodClient={props.algodClient} wallet={props.wallet} account={props.account} accountInfo={props.accountInfo} refreshAccountInfo={props.refreshAccountInfo}/>)}
             </tbody>
         </Table>
     </>);

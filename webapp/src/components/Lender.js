@@ -15,7 +15,7 @@ function Lender(props) {
     const onBid = async () => {
         const params = await props.algodClient.getTransactionParams().do()
 
-        const appAddr = await props.algodClient.getApplicationAddress(appID).do()
+        const appAddr = algosdk.getApplicationAddress(appID)
         const app = await props.algodClient.getApplicationByID(props.auctionID).do()
         const loanAmount = app.params['global-state'].find(p => atob(p.key) === "loan_amount").value.uint
         const currentRepayAmount = app.params['global-state'].find(p => atob(p.key) === "repay_amount").value.uint
@@ -40,13 +40,13 @@ function Lender(props) {
         appArgs.push(algosdk.encodeUint64(Math.floor(repaymentAmount * 1000000)))
         const bidTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs)
 
-        signSendAwait([fundTx, bidTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
+        await signSendAwait([fundTx, bidTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
 
     const onLiquidate = async () => {
         const params = await props.algodClient.getTransactionParams().do()
 
-        const appAddr = await props.algodClient.getApplicationAddress(appID).do()
+        const appAddr = algosdk.getApplicationAddress(appID)
 
         // Fund contract with 100k repay borrower if any + 100k NFT return + 3 * min tx fee
         const fundTx = algosdk.makePaymentTxnWithSuggestedParams(
@@ -57,7 +57,7 @@ function Lender(props) {
         appArgs.push(algosdk.encodeObj("liquidate"))
         const liquidateTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs)
 
-        signSendAwait([fundTx, liquidateTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
+        await signSendAwait([fundTx, liquidateTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
 
     return (<>

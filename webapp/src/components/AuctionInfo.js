@@ -30,6 +30,7 @@ function AuctionInfo(props) {
 
     if (!app) return(<>Enter a valid Auction ID!</>)
     try {
+console.log(app)
     return (<>
         <Table striped bordered hover>
             <tbody>

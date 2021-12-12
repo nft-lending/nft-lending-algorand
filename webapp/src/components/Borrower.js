@@ -56,7 +56,7 @@ function Borrower(props) {
             appArgs
         )
         //const txId = auctionContractCreateTxn.txID().toString();
-        const confirmedTxn = signSendAwait([txn], props.wallet, props.algodClient, props.refreshAccountInfo)
+        const confirmedTxn = await signSendAwait([txn], props.wallet, props.algodClient, props.refreshAccountInfo)
         if (confirmedTxn) {
             console.log("Created aucton: " + confirmedTxn.appID)
             window.alert("Created auction: " + confirmedTxn.appID)
@@ -66,7 +66,7 @@ function Borrower(props) {
     const onStartAuction = async () => {
         const params = await props.algodClient.getTransactionParams().do()
 
-        const appAddr = await props.algodClient.getApplicationAddress(appID).do()
+        const appAddr = algosdk.getApplicationAddress(appID)
         const app = await props.algodClient.getApplicationByID(props.auctionID).do()
         const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
 
@@ -83,13 +83,13 @@ function Borrower(props) {
             props.account.address, appAddr, 
             undefined, undefined, 1, undefined, nftID, params)
 
-        signSendAwait([fundTx, startTx, nftDepositTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
+            await signSendAwait([fundTx, startTx, nftDepositTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
 
     const onCancelAuction = async () => {
         const params = await props.algodClient.getTransactionParams().do()
-
-        const appAddr = await props.algodClient.getApplicationAddress(appID).do()
+ 
+        const appAddr = algosdk.getApplicationAddress(appID)
 
         // Fund contract with 100k NFT return + 3 * min tx fee
         const fundTx = algosdk.makePaymentTxnWithSuggestedParams(
@@ -100,7 +100,7 @@ function Borrower(props) {
         appArgs.push(algosdk.encodeObj("cancel"))
         const cancelTx = algosdk.makeApplicationDeleteTxn(props.account.address, params, appID, appArgs)
 
-        signSendAwait([fundTx, cancelTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
+        await signSendAwait([fundTx, cancelTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
 
     const onRepayAuction = async () => {
@@ -119,7 +119,7 @@ function Borrower(props) {
         appArgs.push(algosdk.encodeObj("repay"))
         const repayTx = algosdk.makeApplicationDeleteTxn(props.account.address, params, appID, appArgs)
 
-        signSendAwait([fundTx, repayTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
+        await signSendAwait([fundTx, repayTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
 
     /* Not needed - contract has no local state
@@ -129,7 +129,7 @@ function Borrower(props) {
         // create unsigned transaction
         const txn = algosdk.makeApplicationOptInTxn(props.account.address, params, appID);
 
-        signSendAwait([txn], props.wallet, props.algodClient, props.refreshAccountInfo)
+        await signSendAwait([txn], props.wallet, props.algodClient, props.refreshAccountInfo)
     }
     */
 
@@ -140,7 +140,7 @@ function Borrower(props) {
         // TODO: compare to makeApplicationCloseOutTxn 
         const txn = algosdk.makeApplicationClearStateTxn(props.account.address, params, appID);
 
-        signSendAwait([txn], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
+        await signSendAwait([txn], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
     return (<>
         <Container fluid="md">
