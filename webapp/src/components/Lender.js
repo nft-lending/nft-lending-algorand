@@ -16,7 +16,7 @@ function Lender(props) {
         const params = await props.algodClient.getTransactionParams().do()
 
         const appAddr = algosdk.getApplicationAddress(appID)
-        const app = await props.algodClient.getApplicationByID(props.auctionID).do()
+        const app = await props.algodClient.getApplicationByID(appID).do()
         const loanAmount = app.params['global-state'].find(p => atob(p.key) === "loan_amount").value.uint
         const currentRepayAmount = app.params['global-state'].find(p => atob(p.key) === "repay_amount").value.uint
         const minBidDec = app.params['global-state'].find(p => atob(p.key) === "min_bid_dec_f").value.uint

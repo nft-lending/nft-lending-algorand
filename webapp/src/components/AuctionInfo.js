@@ -52,11 +52,11 @@ console.log(app)
                 </tr>
                 <tr>
                     <td>Auction End</td>
-                    <td>Block {findParam("auction_end",app).uint}</td>
+                    <td>{Date(findParam("auction_end",app).uint)}</td>
                 </tr>
                 <tr>
                     <td>Repayment Deadline</td>
-                    <td>Block {findParam("repay_deadline",app).uint}</td>
+                    <td>{Date(findParam("repay_deadline",app).uint)}</td>
                 </tr>
                 <tr>
                     <td>Borrower</td>
