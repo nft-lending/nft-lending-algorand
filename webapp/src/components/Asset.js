@@ -16,7 +16,6 @@ function Asset(props) {
     
     const onOptOutAset = async () => {
         const params = await props.algodClient.getTransactionParams().do()
-console.log(assetInfo)
         // create unsigned transaction
         const txn = algosdk.makeAssetTransferTxnWithSuggestedParams(props.account.address, props.account.address, assetInfo.params.creator, undefined, 0, undefined, props.asset['asset-id'], params);
         //makeApplicationClearStateTxn(props.account.address, params, props.asset['asset-id']);
