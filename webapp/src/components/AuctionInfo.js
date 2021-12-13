@@ -44,7 +44,7 @@ function AuctionInfo(props) {
             <tbody>
                 <tr>
                     <td>NFT ID</td>
-                    <td>{findParam("nft_id").uint} 
+                    <td>{findParam("nft_id",app).uint} 
                         {isDeposited()?" Deposited":" Not deposited"}
                     </td>
                 </tr>
@@ -66,11 +66,11 @@ function AuctionInfo(props) {
                 </tr>
                 <tr>
                     <td>Auction End</td>
-                    <td>{new Date(findParam("auction_end").uint * 1000).toString()}</td>
+                    <td>{new Date(findParam("auction_end").uint).toString()}</td>
                 </tr>
                 <tr>
                     <td>Repayment Deadline</td>
-                    <td>{new Date(findParam("repay_deadline").uint * 1000).toString()}</td>
+                    <td>{new Date(findParam("repay_deadline").uint).toString()}</td>
                 </tr>
                 <tr>
                     <td>Borrower</td>
@@ -78,7 +78,7 @@ function AuctionInfo(props) {
                 </tr>
                 <tr>
                     <td>Winning Lender</td>
-                    <td>{algosdk.encodeAddress(new Buffer(findParam("winning_lender").bytes, 'base64'))}</td>
+                    <td>{algosdk.encodeAddress(new Buffer(findParam("winning_lender",app).bytes, 'base64'))}</td>
                 </tr>
             </tbody>
         </Table>

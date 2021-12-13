@@ -16,11 +16,11 @@ function Lender(props) {
         const app = await props.algodClient.getApplicationByID(appID).do().catch((_) => { return undefined })
         if (app === undefined) { window.alert("Auction does not exist."); return }
         const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
-        const auctionEnd = app.params['global-state'].find(p => atob(p.key) === "auction_end").value.uint * 1000
+        const auctionEnd = app.params['global-state'].find(p => atob(p.key) === "auction_end").value.uint
         const loanAmount = app.params['global-state'].find(p => atob(p.key) === "loan_amount").value.uint
         const currentRepayAmount = app.params['global-state'].find(p => atob(p.key) === "repay_amount").value.uint
         const minBidDec = app.params['global-state'].find(p => atob(p.key) === "min_bid_dec_f").value.uint
-        const losingLender = algosdk.encodeAddress(new Buffer(app.params['global-state'].find(p => atob(p.key) === "winning_lender").value.bytes, 'base64'))
+        const losingLender = algosdk.encodeAddress(app.params['global-state'].find(p => atob(p.key) === "winning_lender").value.bytes)
 
         if (Date.now() > auctionEnd) {
             window.alert("The auction has ended.")
@@ -49,8 +49,8 @@ function Lender(props) {
         const appArgs = [];
         appArgs.push(new Uint8Array(Buffer.from("bid")))
         appArgs.push(algosdk.encodeUint64(r))
-    //const adrList =  (losingLender === 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')?undefined:[losingLender]
-        const bidTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs, [losingLender], undefined, [nftID])
+        const adrList =  (losingLender === 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')?undefined:[losingLender]
+        const bidTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs, adrList, undefined, [nftID])
 
         await signSendAwait([fundTx, bidTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
@@ -58,7 +58,7 @@ function Lender(props) {
     const onLiquidate = async () => {
         const app = await props.algodClient.getApplicationByID(appID).do().catch((_) => { return undefined })
         if (app === undefined) { window.alert("Auction does not exist."); return }
-        const repaymentDeadline = app.params['global-state'].find(p => atob(p.key) === "repay_deadline").value.uint * 1000
+        const repaymentDeadline = app.params['global-state'].find(p => atob(p.key) === "repay_deadline").value.uint
         const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
         const borrower = app.params.creator
 
