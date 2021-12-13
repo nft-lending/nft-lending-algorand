@@ -50,7 +50,7 @@ function Lender(props) {
         const appArgs = [];
         appArgs.push(new Uint8Array(Buffer.from("bid")))
         appArgs.push(algosdk.encodeUint64(r))
-        const adrList =  (losingLender === 'zeroAddress')?undefined:[losingLender]
+        const adrList =  (losingLender === zeroAddress)?undefined:[losingLender]
         const bidTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs, adrList, undefined, [nftID])
 
         await signSendAwait([fundTx, bidTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
