@@ -5,7 +5,6 @@ import algosdk from 'algosdk'
 import OptInAsset from './OptInAsset'
 import AuctionInfo from './AuctionInfo'
 import signSendAwait from '../util/signSendAwait'
-import Borrower from './Borrower'
 
 function Lender(props) {
     const [appID, setAppID] = React.useState(0)
