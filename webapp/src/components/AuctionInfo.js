@@ -44,7 +44,7 @@ function AuctionInfo(props) {
             <tbody>
                 <tr>
                     <td>NFT ID</td>
-                    <td>{findParam("nft_id",app).uint} 
+                    <td>{findParam("nft_id").uint} 
                         {isDeposited()?" Deposited":" Not deposited"}
                     </td>
                 </tr>
@@ -78,7 +78,7 @@ function AuctionInfo(props) {
                 </tr>
                 <tr>
                     <td>Winning Lender</td>
-                    <td>{algosdk.encodeAddress(new Buffer(findParam("winning_lender",app).bytes, 'base64'))}</td>
+                    <td>{algosdk.encodeAddress(new Buffer(findParam("winning_lender").bytes, 'base64'))}</td>
                 </tr>
             </tbody>
         </Table>

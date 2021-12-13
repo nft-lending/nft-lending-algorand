@@ -210,6 +210,7 @@ def approval_program():
                 Txn.sender() == borrower, # can happen before borrowing, so only borrower should be allowed this
                 Txn.application_args.length() == Int(1),
                 App.globalGet(winning_lender_key) != Global.zero_address(),
+                Global.latest_timestamp() > App.globalGet(auction_end_time_key), # Auction has ended
                 Global.latest_timestamp() <= App.globalGet(repay_deadline_key), # Repayment deadline has not passed
                 # If liquidated the contract would not exist any longer
                 Balance(Global.current_application_address()) >= App.globalGet(repay_amount_key), # enough to repay lender

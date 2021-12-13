@@ -51,6 +51,11 @@ global ZeroAddress
 !=
 &&
 global LatestTimestamp
+byte "auction_end"
+app_global_get
+>
+&&
+global LatestTimestamp
 byte "repay_deadline"
 app_global_get
 <=

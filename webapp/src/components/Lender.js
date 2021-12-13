@@ -20,7 +20,7 @@ function Lender(props) {
         const loanAmount = app.params['global-state'].find(p => atob(p.key) === "loan_amount").value.uint
         const currentRepayAmount = app.params['global-state'].find(p => atob(p.key) === "repay_amount").value.uint
         const minBidDec = app.params['global-state'].find(p => atob(p.key) === "min_bid_dec_f").value.uint
-        const losingLender = algosdk.encodeAddress(app.params['global-state'].find(p => atob(p.key) === "winning_lender").value.bytes)
+        const losingLender = algosdk.encodeAddress(new Buffer(app.params['global-state'].find(p => atob(p.key) === "winning_lender").value.bytes, 'base64'))
 
         if (Date.now() > auctionEnd) {
             window.alert("The auction has ended.")
@@ -49,8 +49,8 @@ function Lender(props) {
         const appArgs = [];
         appArgs.push(new Uint8Array(Buffer.from("bid")))
         appArgs.push(algosdk.encodeUint64(r))
-        const adrList =  (losingLender === 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')?undefined:[losingLender]
-        const bidTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs, adrList, undefined, [nftID])
+    //const adrList =  (losingLender === 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')?undefined:[losingLender]
+        const bidTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs, [losingLender], undefined, [nftID])
 
         await signSendAwait([fundTx, bidTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }

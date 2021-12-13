@@ -70,6 +70,13 @@ function Borrower(props) {
     const onBorrow = async () => {
         const app = await props.algodClient.getApplicationByID(appID).do().catch((_) => { return undefined })
         if (app === undefined) { window.alert("Auction does not exist."); return }
+        const auctionEnd = app.params['global-state'].find(p => atob(p.key) === "auction_end").value.uint * 1000
+        
+        if (Date.now() <= auctionEnd) {
+            window.alert("Cannot borrow before the auction ends.")
+            return
+        }
+
         const params = await props.algodClient.getTransactionParams().do()
 
         const appArgs = [];
@@ -82,10 +89,16 @@ function Borrower(props) {
     const onRepay = async () => {
         const app = await props.algodClient.getApplicationByID(appID).do().catch((_) => { return undefined })
         if (app === undefined) { window.alert("Auction does not exist."); return }
+        const auctionEnd = app.params['global-state'].find(p => atob(p.key) === "auction_end").value.uint * 1000
         const repaymentDeadline = app.params['global-state'].find(p => atob(p.key) === "repay_deadline").value.uint * 1000
         const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
         const repayAmount = app.params['global-state'].find(p => atob(p.key) === "repay_amount").value.uint
-        const lender = app.params['global-state'].find(p => atob(p.key) === "winning_lender").value.bytes
+        const lender = algosdk.encodeAddress(new Buffer(app.params['global-state'].find(p => atob(p.key) === "winning_lender").value.bytes, 'base64'))
+
+        if (Date.now() <= auctionEnd) {
+            window.alert("Cannot repay before the auction ends.")
+            return
+        }
 
         if (Date.now() > repaymentDeadline) {
             window.alert("Cannot repay after the repayment deadline.")
