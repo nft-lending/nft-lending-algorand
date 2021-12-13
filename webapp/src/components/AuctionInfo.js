@@ -2,6 +2,7 @@ import React from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
 import {Table} from 'react-bootstrap'
 import algosdk from 'algosdk'
+import zeroAddress from '../util/zeroAddress';
 
 function AuctionInfo(props) {
     const [app, setApp] = React.useState();
@@ -25,6 +26,12 @@ function AuctionInfo(props) {
         const found = appAccountInfo.assets.find(asset => asset['asset-id'] === findParam("nft_id").uint)
         if (!found) return false
         return (found.amount > 0)
+    }
+
+    function winningLender() {
+        const w = algosdk.encodeAddress(new Buffer(findParam("winning_lender").bytes, 'base64'))
+        if (w === zeroAddress) return "N/A"
+        return w
     }
 
     /*  Param names:
@@ -78,7 +85,7 @@ function AuctionInfo(props) {
                 </tr>
                 <tr>
                     <td>Winning Lender</td>
-                    <td>{algosdk.encodeAddress(new Buffer(findParam("winning_lender").bytes, 'base64'))}</td>
+                    <td>{winningLender()}</td>
                 </tr>
             </tbody>
         </Table>
