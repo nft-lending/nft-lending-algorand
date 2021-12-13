@@ -39,22 +39,6 @@ function AuctionInfo(props) {
 
     if (!app || !appAccountInfo) return(<>Enter a valid Auction ID!</>)
     try {
-console.log("Info: ")
-console.log(app)
-console.log(appAccountInfo)
-try {console.log(algosdk.encodeAddress(findParam("borrower",app).bytes))}
-catch (e) { console.log(e)}
-/*
-                        {appAccountInfo.assets.find(asset => asset['asset-key'] === findParam("nft_id",app).uint).value > 0?
-"Deposited":"Not deposited"}
-
-
-                <tr>
-                    <td>Algo funding</td>
-                    <td>{appAccountInfo.amount / 1000000.0}</td>
-                </tr>
-
-*/
     return (<>
         <Table striped bordered hover>
             <tbody>
@@ -94,7 +78,7 @@ catch (e) { console.log(e)}
                 </tr>
                 <tr>
                     <td>Winning Lender</td>
-                    <td>{algosdk.encodeAddress(findParam("winning_lender").bytes)}</td>
+                    <td>{algosdk.encodeAddress(new Buffer(findParam("winning_lender",app).bytes, 'base64'))}</td>
                 </tr>
             </tbody>
         </Table>
