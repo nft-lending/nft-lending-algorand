@@ -5,6 +5,7 @@ import algosdk from 'algosdk'
 import signSendAwait from '../util/signSendAwait'
 import AuctionInfo from './AuctionInfo'
 import CreateAuction from './CreateAuction'
+import zeroAddress from '../util/zeroAddress'
 
 function Borrower(props) {
     const [appID, setAppID] = React.useState(0)
@@ -44,10 +45,10 @@ function Borrower(props) {
     const onCancelAuction = async () => {
         const app = await props.algodClient.getApplicationByID(appID).do().catch((_) => { return undefined })
         if (app === undefined) { window.alert("Auction does not exist."); return }
-        const winningLender = algosdk.encodeAddress(app.params['global-state'].find(p => atob(p.key) === "winning_lender").value.bytes)
+        const winningLender = algosdk.encodeAddress(new Buffer(app.params['global-state'].find(p => atob(p.key) === "winning_lender").value.bytes, 'base64'))
         const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
 
-        if (winningLender !== 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') {
+        if (winningLender !== zeroAddress) {
             window.alert("Cannot cancel auction with existing bidders.")
             return
         }
