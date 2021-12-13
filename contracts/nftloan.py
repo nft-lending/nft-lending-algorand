@@ -116,8 +116,9 @@ def approval_program():
     on_bid_repay_amount = Btoi(Txn.application_args[1])
     on_bid_winning_bid_amount = App.globalGet(repay_amount_key)
     on_bid_loan_amount = App.globalGet(loan_amount_key)
+    on_bid_min_bid_decrement_factor = App.globalGet(min_bid_decrement_factor_key)
     on_bid = Seq(
-        on_bid_nft_holding,
+        on_bid_nft_holding, # why? .hasValue() and .value() need it
         Assert(
             And(
                 Txn.application_args.length() == Int(2),
@@ -128,13 +129,13 @@ def approval_program():
                 Global.latest_timestamp() < App.globalGet(auction_end_time_key),
                 # the new bid is within limits
                 on_bid_repay_amount > on_bid_loan_amount,
-                on_bid_repay_amount < on_bid_winning_bid_amount - (on_bid_winning_bid_amount - on_bid_loan_amount) * on_create_min_bid_decrement_factor / Int(DENOMINATOR),
+                on_bid_repay_amount < on_bid_loan_amount + (on_bid_winning_bid_amount - on_bid_loan_amount) * on_bid_min_bid_decrement_factor / Int(DENOMINATOR),
                 # the actual bid payment is before the app call
                 Gtxn[on_bid_txn_index].type_enum() == TxnType.Payment,
                 Gtxn[on_bid_txn_index].sender() == Txn.sender(),
                 Gtxn[on_bid_txn_index].receiver() == Global.current_application_address(),
                 Gtxn[on_bid_txn_index].amount() >= Global.min_txn_fee(),
-                Gtxn[on_bid_txn_index].amount() >= App.globalGet(loan_amount_key), # will subtract the fee upon eventual refund
+                Gtxn[on_bid_txn_index].amount() >= on_bid_loan_amount, # will subtract the fee upon eventual refund
             )
         ),
         If(App.globalGet(winning_lender_key) != Global.zero_address()).Then( # Not the first bid

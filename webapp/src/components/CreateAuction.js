@@ -34,7 +34,7 @@ function CreateAuction(props) {
         const appArgs = [];
         appArgs.push(algosdk.encodeUint64(nftId))
         appArgs.push(algosdk.encodeUint64(now+auctionDuration*1000))
-        appArgs.push(algosdk.encodeUint64(now+repayDuration*1000))
+        appArgs.push(algosdk.encodeUint64(now+auctionDuration*1000+repayDuration*1000))
         appArgs.push(algosdk.encodeUint64(Math.floor(loanAmount * 1000000)))
         appArgs.push(algosdk.encodeUint64(Math.floor(maxRepayAmount * 1000000)))
         appArgs.push(algosdk.encodeUint64(Math.floor(decrFactor*DENOMINATOR)))

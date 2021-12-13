@@ -219,19 +219,19 @@ app_global_get
 &&
 txna ApplicationArgs 1
 btoi
-byte "repay_amount"
+byte "loan_amount"
 app_global_get
 byte "repay_amount"
 app_global_get
 byte "loan_amount"
 app_global_get
 -
-txna ApplicationArgs 5
-btoi
+byte "min_bid_dec_f"
+app_global_get
 *
 int 10000
 /
--
++
 <
 &&
 txn GroupIndex
