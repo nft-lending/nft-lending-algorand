@@ -53,11 +53,24 @@ function Borrower(props) {
         await signSendAwait([fundTx, cancelTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
 
-    const onRepayAuction = async () => {
+    const onBorrow = async () => {
+        const app = await props.algodClient.getApplicationByID(appID).do().catch((_) => { return undefined })
+        if (app === undefined) { window.alert("Auction does not exist."); return }
+        const params = await props.algodClient.getTransactionParams().do()
+
+        const appArgs = [];
+        appArgs.push(new Uint8Array(Buffer.from("borrow")))
+        const borrowTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs)
+
+        await signSendAwait([borrowTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
+    }
+
+    const onRepay = async () => {
         const app = await props.algodClient.getApplicationByID(appID).do().catch((_) => { return undefined })
         if (app === undefined) { window.alert("Auction does not exist."); return }
         const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
         const repayAmount = app.params['global-state'].find(p => atob(p.key) === "repay_amount").value.uint
+        const lender = app.params['global-state'].find(p => atob(p.key) === "winning_lender").value.bytes        
         const params = await props.algodClient.getTransactionParams().do()
         const appAddr = await props.algodClient.getApplicationAddress(appID).do()
 
@@ -68,20 +81,11 @@ function Borrower(props) {
 
         const appArgs = [];
         appArgs.push(new Uint8Array(Buffer.from("repay")))
-        const repayTx = algosdk.makeApplicationDeleteTxn(props.account.address, params, appID, appArgs, undefined, undefined, [nftID])
+        const repayTx = algosdk.makeApplicationDeleteTxn(props.account.address, params, appID, appArgs, [lender], undefined, [nftID])
 
         await signSendAwait([fundTx, repayTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
 
-    const onClearAuction = async () => {
-        const params = await props.algodClient.getTransactionParams().do()
-
-        // create unsigned transaction 
-        // TODO: compare to makeApplicationCloseOutTxn 
-        const txn = algosdk.makeApplicationClearStateTxn(props.account.address, params, appID);
-
-        await signSendAwait([txn], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
-    }
     return (<>
         <Container fluid="md">
             <Row>
@@ -89,7 +93,7 @@ function Borrower(props) {
                     <CreateAuction {...props} />
                 </Col>
                 <Col>
-                    <Card border="primary" style={{ width: '40rem' }}>
+                    <Card border="primary" style={{ width: '48rem' }}>
                         <Card.Header>Auction: {appID}</Card.Header>
                         <Card.Body>
                             <AuctionInfo auctionID={appID} algodClient={props.algodClient} refresh={refreshAuctionInfo} />
@@ -104,11 +108,11 @@ function Borrower(props) {
                                     Start auction
                                 </Button>
                                 <br/><br/>
-                                <Button variant="primary" onClick={onClearAuction}>
-                                    Clear (not needed)
+                                <Button variant="primary" onClick={onBorrow}>
+                                    Borrow
                                 </Button>
                                 <br/><br/>
-                                <Button variant="primary" onClick={onRepayAuction}>
+                                <Button variant="primary" onClick={onRepay}>
                                     Repay Auction + Delete
                                 </Button>
                                 <br/><br/>

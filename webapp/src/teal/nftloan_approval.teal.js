@@ -38,12 +38,11 @@ byte "repay"
 bnz main_l9
 err
 main_l9:
+txn Sender
+global CreatorAddress
+==
 txn NumAppArgs
 int 1
-==
-txn Sender
-byte "borrower"
-app_global_get
 ==
 &&
 byte "winning_lender"
@@ -74,8 +73,7 @@ bnz main_l11
 main_l10:
 byte "nft_id"
 app_global_get
-byte "borrower"
-app_global_get
+global CreatorAddress
 callsub sub0
 byte "winning_lender"
 app_global_get
@@ -94,18 +92,16 @@ app_global_get
 global MinTxnFee
 -
 itxn_field Amount
-byte "borrower"
-app_global_get
+global CreatorAddress
 itxn_field Receiver
 itxn_submit
 b main_l10
 main_l12:
+txn Sender
+global CreatorAddress
+==
 txn NumAppArgs
 int 1
-==
-txn Sender
-byte "borrower"
-app_global_get
 ==
 &&
 byte "winning_lender"
@@ -116,11 +112,9 @@ global ZeroAddress
 assert
 byte "nft_id"
 app_global_get
-byte "borrower"
-app_global_get
+global CreatorAddress
 callsub sub0
-byte "borrower"
-app_global_get
+global CreatorAddress
 callsub sub1
 int 1
 return
@@ -143,12 +137,12 @@ byte "liquidate"
 bnz main_l18
 err
 main_l18:
-txn NumAppArgs
-int 1
-==
 txn Sender
 byte "winning_lender"
 app_global_get
+==
+txn NumAppArgs
+int 1
 ==
 &&
 global LatestTimestamp
@@ -162,18 +156,21 @@ app_global_get
 byte "winning_lender"
 app_global_get
 callsub sub0
-byte "borrower"
-app_global_get
-callsub sub1
 byte "winning_lender"
 global ZeroAddress
 app_global_put
+global CreatorAddress
+callsub sub1
 int 1
 return
 main_l19:
+txn Sender
+global CreatorAddress
+==
 txn NumAppArgs
 int 1
 ==
+&&
 global LatestTimestamp
 byte "auction_end"
 app_global_get
@@ -188,8 +185,7 @@ app_global_get
 global MinTxnFee
 -
 itxn_field Amount
-byte "borrower"
-app_global_get
+global CreatorAddress
 itxn_field Receiver
 itxn_submit
 int 1
@@ -308,9 +304,13 @@ itxn_field Receiver
 itxn_submit
 b main_l21
 main_l23:
+txn Sender
+global CreatorAddress
+==
 txn NumAppArgs
 int 1
 ==
+&&
 global LatestTimestamp
 byte "auction_end"
 app_global_get
@@ -360,9 +360,6 @@ int 10000
 <
 &&
 assert
-byte "borrower"
-txn Sender
-app_global_put
 byte "nft_id"
 txna ApplicationArgs 0
 btoi

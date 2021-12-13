@@ -1,14 +1,18 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
 import {Table} from 'react-bootstrap'
+import algosdk from 'algosdk'
 
 function AuctionInfo(props) {
     const [app, setApp] = React.useState();
+    const [appAccountInfo, setAppAccountInfo] = React.useState();
 
     React.useEffect(() => {
         (async () => {
             try {
                 setApp(await props.algodClient.getApplicationByID(props.auctionID).do())
+                const appAddr = await props.algodClient.getApplicationAddress(props.auctionID).do()
+                setAppAccountInfo(await props.algodClient.accountInformation(appAddr).do())
             } catch (_) { setApp(null) }
         }) ()
     }, [props.algodClient, props.auctionID, props.refresh])
@@ -28,14 +32,24 @@ function AuctionInfo(props) {
         repay_deadline
     */
 
-    if (!app) return(<>Enter a valid Auction ID!</>)
+    if (!app || !appAccountInfo) return(<>Enter a valid Auction ID!</>)
     try {
+console.log(app)
+try {console.log(algosdk.encodeAddress(findParam("borrower",app).bytes))}
+catch (e) { console.log(e)}
     return (<>
         <Table striped bordered hover>
             <tbody>
                 <tr>
                     <td>NFT ID</td>
-                    <td>{findParam("nft_id",app).uint}</td>
+                    <td>{findParam("nft_id",app).uint}
+                        {appAccountInfo.assets.find(asset => asset['asset-key'] === findParam("nft_id",app).uint).value > 0?
+                            "Deposited":"Not deposited"}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Algo funding</td>
+                    <td>{appAccountInfo.amount / 1000000.0}</td>
                 </tr>
                 <tr>
                     <td>Loan amount</td>
@@ -59,11 +73,11 @@ function AuctionInfo(props) {
                 </tr>
                 <tr>
                     <td>Borrower</td>
-                    <td>{findParam("borrower",app).bytes}</td>
+                    <td>{app.params.creator}</td>
                 </tr>
                 <tr>
                     <td>Winning Lender</td>
-                    <td>{findParam("winning_lender",app).bytestd}</td>
+                    <td>{algosdk.encodeAddress(findParam("winning_lender",app).bytes)}</td>
                 </tr>
             </tbody>
         </Table>

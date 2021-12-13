@@ -5,6 +5,7 @@ import algosdk from 'algosdk'
 import OptInAsset from './OptInAsset'
 import AuctionInfo from './AuctionInfo'
 import signSendAwait from '../util/signSendAwait'
+import Borrower from './Borrower'
 
 function Lender(props) {
     const [appID, setAppID] = React.useState(0)
@@ -18,6 +19,7 @@ function Lender(props) {
         const loanAmount = app.params['global-state'].find(p => atob(p.key) === "loan_amount").value.uint
         const currentRepayAmount = app.params['global-state'].find(p => atob(p.key) === "repay_amount").value.uint
         const minBidDec = app.params['global-state'].find(p => atob(p.key) === "min_bid_dec_f").value.uint
+        const losingLender = app.params['global-state'].find(p => atob(p.key) === "winning_lender").value.bytes        
         const params = await props.algodClient.getTransactionParams().do()
         const appAddr = algosdk.getApplicationAddress(appID)
 
@@ -38,7 +40,7 @@ function Lender(props) {
         const appArgs = [];
         appArgs.push(new Uint8Array(Buffer.from("bid")))
         appArgs.push(algosdk.encodeUint64(Math.floor(repaymentAmount * 1000000)))
-        const bidTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs)
+        const bidTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs, [losingLender])
 
         await signSendAwait([fundTx, bidTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
@@ -47,6 +49,7 @@ function Lender(props) {
         const app = await props.algodClient.getApplicationByID(appID).do().catch((_) => { return undefined })
         if (app === undefined) { window.alert("Auction does not exist."); return }
         const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
+        const borrower = algosdk.decodeAddress(app.params.creator)
         const params = await props.algodClient.getTransactionParams().do()
         const appAddr = algosdk.getApplicationAddress(appID)
 
@@ -57,7 +60,7 @@ function Lender(props) {
 
         const appArgs = [];
         appArgs.push(new Uint8Array(Buffer.from("liquidate")))
-        const liquidateTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs, undefined, undefined, [nftID])
+        const liquidateTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs, [borrower], undefined, [nftID])
 
         await signSendAwait([fundTx, liquidateTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }
@@ -69,7 +72,7 @@ function Lender(props) {
                     <OptInAsset algodClient={props.algodClient} account={props.account} wallet={props.wallet} refreshAccountInfo={props.refreshAccountInfo} />
                 </Col>
                 <Col>
-                    <Card border="primary" style={{ width: '40rem' }}>
+                    <Card border="primary" style={{ width: '48rem' }}>
                         <Card.Header>Auction: {appID}</Card.Header>
                         <Card.Body>
                             <AuctionInfo auctionID={appID} algodClient={props.algodClient} refresh={refreshAuctionInfo} />

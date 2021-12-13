@@ -4,7 +4,7 @@ from pyteal import *
 DENOMINATOR: Final = 10000
 
 def approval_program():
-    borrower_key = Bytes("borrower")
+    borrower = Global.creator_address()
     nft_id_key = Bytes("nft_id")
     auction_end_time_key = Bytes("auction_end") # BTW, auction starts when contract is deployed
     repay_deadline_key = Bytes("repay_deadline")
@@ -69,7 +69,7 @@ def approval_program():
                 on_create_min_bid_decrement_factor < Int(DENOMINATOR), # prevent increasing bids for repayment amount
             )
         ),
-        App.globalPut(borrower_key, Txn.sender()), # borrower initiates the auction
+        # borrower initiates the auction, so he is Global.creator_address()
         App.globalPut(nft_id_key, on_create_nft_id),
         App.globalPut(auction_end_time_key, on_create_auction_end_time),
         App.globalPut(repay_deadline_key, on_create_repay_deadline),  
@@ -87,6 +87,7 @@ def approval_program():
     on_start = Seq(
         Assert(
             And(
+                Txn.sender() == borrower,
                 Txn.application_args.length() == Int(1),
                 Global.latest_timestamp() < App.globalGet(auction_end_time_key), # must start before auction end
             )
@@ -157,6 +158,7 @@ def approval_program():
     on_borrow = Seq(
         Assert(
             And(
+                Txn.sender() == borrower,
                 Txn.application_args.length() == Int(1),
                 Global.latest_timestamp() > App.globalGet(auction_end_time_key), # Auction has ended
             )
@@ -167,7 +169,7 @@ def approval_program():
             {
                 TxnField.type_enum: TxnType.Payment,
                 TxnField.amount: App.globalGet(loan_amount_key) - Global.min_txn_fee(),
-                TxnField.receiver: App.globalGet(borrower_key),
+                TxnField.receiver: borrower,
             }
         ),
         InnerTxnBuilder.Submit(),
@@ -177,18 +179,18 @@ def approval_program():
     on_liquidate = Seq(
         Assert(
             And(
-                Txn.application_args.length() == Int(1),
                 Txn.sender() == App.globalGet(winning_lender_key), # Covers case where there was no bider at all
+                Txn.application_args.length() == Int(1),
                 Global.latest_timestamp() > App.globalGet(repay_deadline_key), # Repayment deadline has passed
                 # If repayed the contract would not exist any longer
             )
         ),
         # The NFT goes to the liquidator = lender
         closeNFTTo(App.globalGet(nft_id_key), App.globalGet(winning_lender_key)),
-        # The funds, potentially unclaimed by borrower go to the borrower
-        closeAccountTo(App.globalGet(borrower_key)),
         # remove winning lender so auction contract can be deleted by "cancel" operation
         App.globalPut(winning_lender_key, Global.zero_address()),
+        # The funds, potentially unclaimed by borrower go to the borrower
+        closeAccountTo(borrower),
         Approve(),
     )
 
@@ -200,32 +202,33 @@ def approval_program():
         [on_call_method == Bytes("liquidate"), on_liquidate],
     )
 
+    # on_repay transaction should be preceded by a payment, not necessary in the same transaction group
     on_repay = Seq(
         Assert(
             And(
+                Txn.sender() == borrower, # can happen before borrowing, so only borrower should be allowed this
                 Txn.application_args.length() == Int(1),
-                Txn.sender() == App.globalGet(borrower_key),
                 App.globalGet(winning_lender_key) != Global.zero_address(),
                 Global.latest_timestamp() <= App.globalGet(repay_deadline_key), # Repayment deadline has not passed
                 # If liquidated the contract would not exist any longer
                 Balance(Global.current_application_address()) >= App.globalGet(repay_amount_key), # enough to repay lender
             )
         ),
-        If(Balance(Global.current_application_address()) > App.globalGet(repay_amount_key) + Global.min_txn_fee()).Then( # Not the first bid
+        If(Balance(Global.current_application_address()) > App.globalGet(repay_amount_key) + Global.min_txn_fee()).Then( # Contract balance shows overpaid
             Seq( # Redfund borrower the overpayment
                 InnerTxnBuilder.Begin(),
                 InnerTxnBuilder.SetFields(
                     {
                         TxnField.type_enum: TxnType.Payment,
                         TxnField.amount: Balance(Global.current_application_address()) - App.globalGet(repay_amount_key) - Global.min_txn_fee(),
-                        TxnField.receiver: App.globalGet(borrower_key),
+                        TxnField.receiver: borrower,
                     }
                 ),
                 InnerTxnBuilder.Submit(),
             )
         ),
         # The NFT goes to the borrower
-        closeNFTTo(App.globalGet(nft_id_key), App.globalGet(borrower_key)),
+        closeNFTTo(App.globalGet(nft_id_key), borrower),
         # The funds go to the lender
         closeAccountTo(App.globalGet(winning_lender_key)),
         Approve(),
@@ -235,14 +238,14 @@ def approval_program():
     on_cancel = Seq(
         Assert(
             And(
+                Txn.sender() == borrower,
                 Txn.application_args.length() == Int(1),
-                Txn.sender() == App.globalGet(borrower_key),
                 App.globalGet(winning_lender_key) == Global.zero_address(), # noone bid
             )
         ),
         # The NFT and the funds go to the borrower
-        closeNFTTo(App.globalGet(nft_id_key), App.globalGet(borrower_key)),
-        closeAccountTo(App.globalGet(borrower_key)),
+        closeNFTTo(App.globalGet(nft_id_key), borrower),
+        closeAccountTo(borrower),
         Approve(),
     )
 
