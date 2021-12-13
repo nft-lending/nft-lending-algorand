@@ -14,7 +14,7 @@ function Borrower(props) {
     const onStartAuction = async () => {
         const app = await props.algodClient.getApplicationByID(appID).do().catch((_) => { return undefined })
         if (app === undefined) { window.alert("Auction does not exist."); return }
-        const auctionEnd = app.params['global-state'].find(p => atob(p.key) === "auction_end").value.uint
+        const auctionEnd = app.params['global-state'].find(p => atob(p.key) === "auction_end").value.uint * 1000
         const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
 
         if (Date.now() > auctionEnd) {
@@ -82,7 +82,7 @@ function Borrower(props) {
     const onRepay = async () => {
         const app = await props.algodClient.getApplicationByID(appID).do().catch((_) => { return undefined })
         if (app === undefined) { window.alert("Auction does not exist."); return }
-        const repaymentDeadline = app.params['global-state'].find(p => atob(p.key) === "repay_deadline").value.uint
+        const repaymentDeadline = app.params['global-state'].find(p => atob(p.key) === "repay_deadline").value.uint * 1000
         const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
         const repayAmount = app.params['global-state'].find(p => atob(p.key) === "repay_amount").value.uint
         const lender = app.params['global-state'].find(p => atob(p.key) === "winning_lender").value.bytes

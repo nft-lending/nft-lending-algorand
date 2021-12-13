@@ -66,11 +66,11 @@ function AuctionInfo(props) {
                 </tr>
                 <tr>
                     <td>Auction End</td>
-                    <td>{new Date(findParam("auction_end").uint).toString()}</td>
+                    <td>{new Date(findParam("auction_end").uint * 1000).toString()}</td>
                 </tr>
                 <tr>
                     <td>Repayment Deadline</td>
-                    <td>{new Date(findParam("repay_deadline").uint).toString()}</td>
+                    <td>{new Date(findParam("repay_deadline").uint * 1000).toString()}</td>
                 </tr>
                 <tr>
                     <td>Borrower</td>
