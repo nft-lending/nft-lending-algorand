@@ -17,6 +17,12 @@ function Borrower(props) {
         if (app === undefined) { window.alert("Auction does not exist."); return }
         const auctionEnd = app.params['global-state'].find(p => atob(p.key) === "auction_end").value.uint * 1000
         const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
+        const borrower = app.params.creator
+
+        if (props.account.address !== borrower) {
+            window.alert("Not your auction.")
+            return
+        }
 
         if (Date.now() > auctionEnd) {
             window.alert("Cannot start auction after its scheduled ending.")
@@ -47,6 +53,17 @@ function Borrower(props) {
         if (app === undefined) { window.alert("Auction does not exist."); return }
         const winningLender = algosdk.encodeAddress(new Buffer(app.params['global-state'].find(p => atob(p.key) === "winning_lender").value.bytes, 'base64'))
         const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
+        const borrower = app.params.creator
+
+        if (props.account.address !== borrower) {
+            window.alert("Not your auction.")
+            return
+        }
+
+        if (winningLender !== zeroAddress) {
+            window.alert("Cannot cancel auction with existing bidders.")
+            return
+        }
 
         if (winningLender !== zeroAddress) {
             window.alert("Cannot cancel auction with existing bidders.")
@@ -72,9 +89,21 @@ function Borrower(props) {
         const app = await props.algodClient.getApplicationByID(appID).do().catch((_) => { return undefined })
         if (app === undefined) { window.alert("Auction does not exist."); return }
         const auctionEnd = app.params['global-state'].find(p => atob(p.key) === "auction_end").value.uint * 1000
+        const winningLender = algosdk.encodeAddress(new Buffer(app.params['global-state'].find(p => atob(p.key) === "winning_lender").value.bytes, 'base64'))
+        const borrower = app.params.creator
         
+        if (props.account.address !== borrower) {
+            window.alert("Not your auction.")
+            return
+        }
+
         if (Date.now() <= auctionEnd) {
             window.alert("Cannot borrow before the auction ends.")
+            return
+        }
+
+        if (winningLender === zeroAddress) {
+            window.alert("Cannot borrow - there is no lender.")
             return
         }
 
@@ -95,6 +124,12 @@ function Borrower(props) {
         const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
         const repayAmount = app.params['global-state'].find(p => atob(p.key) === "repay_amount").value.uint
         const lender = algosdk.encodeAddress(new Buffer(app.params['global-state'].find(p => atob(p.key) === "winning_lender").value.bytes, 'base64'))
+        const borrower = app.params.creator
+
+        if (props.account.address !== borrower) {
+            window.alert("Not your auction.")
+            return
+        }
 
         if (Date.now() <= auctionEnd) {
             window.alert("Cannot repay before the auction ends.")
@@ -103,6 +138,11 @@ function Borrower(props) {
 
         if (Date.now() > repaymentDeadline) {
             window.alert("Cannot repay after the repayment deadline.")
+            return
+        }
+
+        if (lender === zeroAddress) {
+            window.alert("Nothing to repay.")
             return
         }
 

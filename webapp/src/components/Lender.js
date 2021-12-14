@@ -60,11 +60,17 @@ function Lender(props) {
         const app = await props.algodClient.getApplicationByID(appID).do().catch((_) => { return undefined })
         if (app === undefined) { window.alert("Auction does not exist."); return }
         const repaymentDeadline = app.params['global-state'].find(p => atob(p.key) === "repay_deadline").value.uint * 1000
+        const winningLender = algosdk.encodeAddress(new Buffer(app.params['global-state'].find(p => atob(p.key) === "winning_lender").value.bytes, 'base64'))
         const nftID = app.params['global-state'].find(p => atob(p.key) === "nft_id").value.uint
         const borrower = app.params.creator
 
         if (Date.now() <= repaymentDeadline) {
             window.alert("Cannot liquidate before the repayment deadline.")
+            return
+        }
+
+        if (props.account.address !== winningLender) {
+            window.alert("Cannot liquidate - you are not the lender.")
             return
         }
 
