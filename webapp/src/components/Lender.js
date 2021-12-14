@@ -42,9 +42,9 @@ function Lender(props) {
         const params = await props.algodClient.getTransactionParams().do()
         const appAddr = algosdk.getApplicationAddress(appID)
 
-        // Fund contract with 100k NFT return + 3 * min tx fee
+        // Fund contract with 3 * min tx fee
         const fundTx = algosdk.makePaymentTxnWithSuggestedParams(
-            props.account.address, appAddr, 103000 + loanAmount, 
+            props.account.address, appAddr, 3000 + loanAmount, 
             undefined, undefined, params)
 
         const appArgs = [];
@@ -71,9 +71,9 @@ function Lender(props) {
         const params = await props.algodClient.getTransactionParams().do()
         const appAddr = algosdk.getApplicationAddress(appID)
 
-        // Fund contract with 100k repay borrower if any + 100k NFT return + 3 * min tx fee
+        // Fund contract with 3 * min tx fee
         const fundTx = algosdk.makePaymentTxnWithSuggestedParams(
-            props.account.address, appAddr, 203000, 
+            props.account.address, appAddr, 3000, 
             undefined, undefined, params)
 
         const appArgs = [];

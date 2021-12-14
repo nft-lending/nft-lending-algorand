@@ -51,24 +51,8 @@ function CreateAuction(props) {
             2,
             appArgs
         )
-        //const txId = auctionContractCreateTxn.txID().toString();
-        const confirmedTxn = await signSendAwait([txn], props.wallet, props.algodClient, props.refreshAccountInfo)
-        //if (confirmedTxn) {
-        //    console.log("Created aucton: " + confirmedTxn.appID)
-        //    window.alert("Created auction: " + confirmedTxn.appID)
-        //}
-    }
-
-    /* Not needed - contract has no local state
-    const onOptIn = async () => {
-        const params = await props.algodClient.getTransactionParams().do()
-
-        // create unsigned transaction
-        const txn = algosdk.makeApplicationOptInTxn(props.account.address, params, appID);
-
         await signSendAwait([txn], props.wallet, props.algodClient, props.refreshAccountInfo)
     }
-    */
 
     return (<>
         <Card border="primary" style={{ width: '18rem' }}>
