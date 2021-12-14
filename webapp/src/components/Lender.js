@@ -5,6 +5,7 @@ import algosdk from 'algosdk'
 import OptInAsset from './OptInAsset'
 import AuctionInfo from './AuctionInfo'
 import signSendAwait from '../util/signSendAwait'
+import zeroAddress from '../util/zeroAddress'
 
 function Lender(props) {
     const [appID, setAppID] = React.useState(0)
@@ -49,8 +50,8 @@ function Lender(props) {
         const appArgs = [];
         appArgs.push(new Uint8Array(Buffer.from("bid")))
         appArgs.push(algosdk.encodeUint64(r))
-    //const adrList =  (losingLender === 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')?undefined:[losingLender]
-        const bidTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs, [losingLender], undefined, [nftID])
+        const adrList =  (losingLender === zeroAddress)?undefined:[losingLender]
+        const bidTx = algosdk.makeApplicationNoOpTxn(props.account.address, params, appID, appArgs, adrList, undefined, [nftID])
 
         await signSendAwait([fundTx, bidTx], props.wallet, props.algodClient, () => { props.refreshAccountInfo(); doRefreshAuctionInfo() })
     }

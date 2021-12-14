@@ -8,13 +8,8 @@ import algosdk from 'algosdk'
 import API_KEY from '../private/API_KEY'
 
 const algodClient = new algosdk.Algodv2(
-//    'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 
     { 'X-API-Key': API_KEY },
     'https://testnet-algorand.api.purestake.io/ps2',
-//    'http://localhost',
-//    'https://api.algoexplorer.io', 
-//    'https://api.testnet.algoexplorer.io', 
-//    '4001'
     ''
 )
 
