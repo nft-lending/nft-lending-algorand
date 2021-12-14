@@ -30,14 +30,6 @@ Instead of sending the Lender and the Borrower to another venue, in order to fin
 
 ![AUCTION](doc/AUCTION.png)
 
-- The Borrower sets up the auction by offering his NFT and putting it into the Auction Smart Contract as collateral. The initial parameters are the duration of the auction, deadline for repayment of the loan, the amount borrowed, the maximal agreeable repayment amount, the minimal bid decrease (factor of the previous difference between the above two parameters).
-- Potential Lenders start bidding at the maximal agreeable repayment amount and compete by bidding lower repayment amounts. At the end of the auction the winning bidder is the one offering the lowest repayment amount. As prospective Lenders bid, they deposit the funds to be borrowed into the Smart Contract. As a new winning bid arrives along with a deposit, the overtaken bidder is refunded her deposit immediately.
-- Once the auction end, the loan commences. The Borrower can immediately borrow the funds by pulling them from the Smart Contract.
-- If the Borrower repays the loan timely before the deadline, he gets his NFT back, while the repayment funds go immediately to the Lender.
-- If the Borrower fails to repay the loan timely he goes into default, after which the Lender can liquidate the loan and receive the NFT deposited as collateral. 
-
-So why does not the Borrower make payments, like in the regular bank loans? There is no need to repay while still having the collateral locked - this is just an additional risk. Instead the Borrower can engage his funds elsewhere in DeFi and make extra money.
-
 ## Implementation
 
 The Decentralized Application (DApp) uses the Algorand blockchain as well as a web interface, accessible over the Internet.
@@ -64,21 +56,33 @@ Th auction is governed on-chain as low network fees allow this as well.
 
 ### Workflow
 
-The auction process is described as follows:
-
-![Auction Diagram](doc/Auction%20Diagram.png)
-
 The NFT lending process is described as follows:
 
 ![DApp Diagram](doc/DApp%20Diagram.png)
 
-There are two possible outcomes: successful repayment or liquidation:
+- The Borrower sets up the auction by offering his NFT and putting it into the Auction Smart Contract as collateral. The initial parameters are the duration of the auction, deadline for repayment of the loan, the amount borrowed, the maximal agreeable repayment amount, the minimal bid decrease (factor of the previous difference between the above two parameters).
+- Potential Lenders start bidding at the maximal agreeable repayment amount and compete by bidding lower repayment amounts. At the end of the auction the winning bidder is the one offering the lowest repayment amount. As prospective Lenders bid, they deposit the funds to be borrowed into the Smart Contract. As a new winning bid arrives along with a deposit, the overtaken bidder is refunded her deposit immediately.
+- Once the auction end, the loan commences. The Borrower can immediately borrow the funds by pulling them from the Smart Contract.
+- If the Borrower repays the loan timely before the deadline, he gets his NFT back, while the repayment funds go immediately to the Lender.
+- If the Borrower fails to repay the loan timely he goes into default, after which the Lender can liquidate the loan and receive the NFT deposited as collateral. 
 
-![DApp Diagram](doc/DApp%20Repay.png)
+So why does not the Borrower make payments, like in the regular bank loans? There is no need to repay while still having the collateral locked - this is just an additional risk. Instead the Borrower can engage his funds elsewhere in DeFi and make extra money.
+
+Here is the timing of events. Initially there is a loan auction:
+
+![Loan Auction](doc/Loan%20Auction.png)
+
+There are two possible outcomes: successful repayment or liquidation.
+
+Repayment:
+
+![Loan Repayment](doc/Loan%20Repayment.png)
 
 The owner deposits the NFT along with the terms. The lender accepts the terms and lends the money in form of an Algorand ASA token. Once the owner repays the debt determined in the terms, the NFT is returned to the owner.
 
-![DApp Diagram](doc/DApp%20Liquidate.png)
+Liquidation:
+
+![Loan Liquidation](doc/Loan%20Liquidation.png)
 
 If the NFT does not repay the debt timely within the deadline, upon request of the lender the NFT is transferred to the lender as part of the liquidation process.
 
