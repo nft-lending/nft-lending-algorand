@@ -30,11 +30,11 @@ function Lender(props) {
 
         const r = Math.floor(repaymentAmount * 1000000)
         const maxR = loanAmount + minBidDec * (currentRepayAmount-loanAmount) / 10000
-        if (r < loanAmount ||
+        if (r <= loanAmount ||
             r > maxR) {
             window.alert(
-                "Repayment amount must be between " + 
-                loanAmount / 1000000.0 + " and " +
+                "Repayment amount must be between (>) " + 
+                loanAmount / 1000000.0 + " and (<=) " +
                 maxR / 1000000.0 + ".")
             return
         }

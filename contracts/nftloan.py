@@ -129,7 +129,7 @@ def approval_program():
                 Global.latest_timestamp() < App.globalGet(auction_end_time_key),
                 # the new bid is within limits
                 on_bid_repay_amount > on_bid_loan_amount,
-                on_bid_repay_amount < on_bid_loan_amount + (on_bid_winning_bid_amount - on_bid_loan_amount) * on_bid_min_bid_decrement_factor / Int(DENOMINATOR),
+                on_bid_repay_amount <= on_bid_loan_amount + (on_bid_winning_bid_amount - on_bid_loan_amount) * on_bid_min_bid_decrement_factor / Int(DENOMINATOR),
                 # the actual bid payment is before the app call
                 Gtxn[on_bid_txn_index].type_enum() == TxnType.Payment,
                 Gtxn[on_bid_txn_index].sender() == Txn.sender(),
