@@ -32,15 +32,15 @@ En la tercera columna, el usuario puede acceder a la DApp utilizando un navegado
  
 El proceso de préstamos NFT se describe a continuación:
  
-![DApp Diagram](Diagrama%20de%20DApp.png)
+![Protocolo DApp](Protocolo%20DApp.png)
  
 Hay dos resultados posibles: reembolso o liquidación exitosos:
  
-![DApp Diagram](DApp%20Pagar.png)
+![Pago de Prestamo](Pago%20de%20Prestamo.png)
  
 El propietario deposita el NFT junto con los términos. El prestamista acepta los términos y presta el dinero en forma de un token de Algorand ASA. Una vez que el propietario paga la deuda determinada en los términos, el NFT se devuelve al propietario.
  
-![DApp Diagram](DApp%20Liquidar.png)
+![Préstamo Liquidación](Préstamo%20Liquidación.png)
  
 Si el NFT no paga la deuda a tiempo dentro del plazo, a solicitud del prestamista, el NFT se transfiere al prestamista como parte del proceso de liquidación.
  
