@@ -52,7 +52,7 @@ In the third column, the user can access the DApp using a browser. The browser r
 
 Notably, Algorand network cost is relatively low. This allows for the Borrower to deploy a new instance of the Smart Contract for each NFT put as a collateral, and create an auction for it. When the auction ends, the lending commences, and when the lending ends, whether with repayment or liquidation, the Smart Contract can be destroyed.
 
-Th auction is governed on-chain as low network fees allow this as well. 
+The auction is governed on-chain as low network fees allow this as well. 
 
 ### Workflow
 

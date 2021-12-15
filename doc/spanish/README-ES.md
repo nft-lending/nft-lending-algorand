@@ -1,91 +1,91 @@
-# NFT Lending Auction
+# Subasta de Préstamos NFT
 
-## Introduction
+## Introducción
 
-This is a decentralized application for lending Non-Fungible Tokens (NFTs). The web front end is written for deployment on IPFS. As such it can be loaded as static content and it does not rely on any active service. The back end is a Smart Contract running on the ALgorand blockchain. 
+Esta es una aplicación descentralizada para prestar tokens no fungibles (NFT). La interfaz web está escrita para su implementación en IPFS. Como tal, se puede cargar como contenido estático y no depende de ningún servicio activo. El back-end es un contrato inteligente que se ejecuta en la cadena de bloques ALgorand. 
 
-This application allows both the Borrower and the Lender to be engaged in Decentralized Finance (DeFi) within and outside of this application. 
+Esta aplicación permite que tanto el prestatario como el prestamista participen en finanzas descentralizadas (DeFi) dentro y fuera de esta aplicación.
 
-In an auction the prospective Lenders compete for the best offering to the Borrower. The Borroser uses his NFT as collateral for the loan, to receive funds that can further be engaged in other DeFi protocols.
+En una subasta, los posibles prestamistas compiten por la mejor oferta para el prestatario. El Borroser usa su NFT como garantía para el préstamo, para recibir fondos que pueden participar en otros protocolos DeFi.
 
-## Non-fungible Lending
+## Préstamos No Fungibles
 
-Using fungible collateral in DeFi lending was one of the first offerings. Typically, the borrower vouches a collateral which is expected to increase in value. Against that collateral, the borrower gets a more stable asset, which is expected to be easier to repay. The funds borrowed can be put to work in other DeFi protocols. For the lender, the profit lays in the interest rate charged for the assets lent. Lenders can chose between various lending protocols in order to optimize their yield. For example, one of the first and largest DeFi lending protocol is AAVE:
+El uso de garantías fungibles en los préstamos DeFi fue una de las primeras ofertas. Por lo general, el prestatario garantiza una garantía cuyo valor se espera que aumente. Contra esa garantía, el prestatario obtiene un activo más estable, que se espera sea más fácil de reembolsar. Los fondos prestados se pueden poner a trabajar en otros protocolos DeFi. Para el prestamista, el beneficio reside en la tasa de interés que se cobra por los activos prestados. Los prestamistas pueden elegir entre varios protocolos de préstamos para optimizar su rendimiento. Por ejemplo, uno de los primeros y más grandes protocolos de préstamos DeFi es AAVE:
 
 ![Fungible Lending](doc/AAVE%203D.png)
 
-This is very convenient for using fungible assets as collateral. However, if the borrower has liquid fungible assets, the motive for obtaining a loan against that is not very intuitive. 
+Esto es muy conveniente para utilizar activos fungibles como garantía. Sin embargo, si el prestatario tiene activos fungibles líquidos, el motivo para obtener un préstamo en contra de eso no es muy intuitivo. 
 
-A house for example is non-fungible. It can be represented as NFT. AAVE expects a fungible collateral, as it is easy to treat in "bulk" without special attention put into each loan. A non-fungible collateral would not work there:
+Una casa, por ejemplo, no es fungible. Puede representarse como NFT. AAVE espera una garantía fungible, ya que es fácil de tratar "a granel" sin prestar especial atención a cada préstamo. Una garantía no fungible no funcionaría allí:
 
 ![Non-Fungible Collateral](doc/AAVE%20Fail%203D.png)
 
-This is why we need a protocol for lending against non-fungible collateral:
+Es por eso que necesitamos un protocolo para préstamos con garantía no fungible:
 
 ![NFT Lending](doc/NFT%20LENDING%203D.png)
 
-The simplest way to do this would be to **find a way the Borrower and the Lender to somehow fin each other** and decide on the terms. Then they can enter a simple escrow Smart Contract to achieve the deal trustlessly. Trustlessly means without a need of trust - all anyone needs to trust is that the Smart Contract is going to behave as programmed, and to assure this is the core job of the Smart Contract capable blockchain such as Algorand.
+La forma más sencilla de hacer esto sería **encontrar una manera de que el Prestatario y el Prestamista se emparejen de alguna manera** y decidan los términos. Luego, pueden ingresar un contrato inteligente de depósito en garantía simple para lograr el trato sin confianza. Sin confianza significa sin necesidad de confianza: todo lo que cualquiera debe confiar es que el Smart Contract se comportará según lo programado, y asegurar que este sea el trabajo principal de la cadena de bloques con capacidad para Smart Contract como Algorand.
 
-Instead of sending the Lender and the Borrower to another venue, in order to find each other, a friendly DApp would allow them to stay and find each other without going elsewhere. To achieve this, the DApp offers an auction:
+En lugar de enviar al Prestamista y al Prestatario a otro lugar, para encontrarse, un DApp amigable les permitiría quedarse y encontrarse sin tener que ir a otra parte. Para lograrlo, la DApp ofrece una subasta:
 
 ![AUCTION](doc/AUCTION.png)
 
-## Implementation
+## Implementación
 
-The Decentralized Application (DApp) uses the Algorand blockchain as well as a web interface, accessible over the Internet.
+La aplicación descentralizada (DApp) utiliza la cadena de bloques Algorand, así como una interfaz web, accesible a través de Internet.
 
-The business logic of the application is implemented as Algorand smart contract.
+La lógica empresarial de la aplicación se implementa como contrato inteligente de Algorand.
 
-The front end is running in the user's browser as JavaScript code. This code is served as static content from IPFS (Inter-Planetary File System), and as such it is immutable and not prone to front-end code modification attacks.
+La interfaz se ejecuta en el navegador del usuario como código JavaScript. Este código se sirve como contenido estático de IPFS (Inter-Planetary File System) y, como tal, es inmutable y no es propenso a ataques de modificación de código de front-end.
 
-### Implementation and Usage Lifecycle
+### Implementación y ciclo de vida de uso
 
-The following diagram shows the deployment and usage lifetime of the application.
+El siguiente diagrama muestra la implementación y la vida útil de la aplicación.
 
 ![Lifecycle](doc/Development%20and%20Usage%20Process.png)
 
-In the first column, the contracts written in PyTeal are compiled into TEAL code understandable by Algorand an deployed to the blockchain.
+En la primera columna, los contratos escritos en PyTeal se compilan en código TEAL comprensible por Algo y se implementan en la cadena de bloques.
 
-In the second column, the front-end, written in JavaScript and using React, js-algorand-sdk and the wallet APIs is packaged and deployed on IPFS. The DNS record is updated to reflect the IPFS URL, so the user can access the application by it's domain name. In the future, in addition to DNS, Ethereum Naming Service (ENS) or Unstopable Domains name sevice shall be used.
+En la segunda columna, el front-end, escrito en JavaScript y usando React, js-algorand-sdk y las API de billetera, está empaquetado e implementado en IPFS. El registro DNS se actualiza para reflejar la URL de IPFS, por lo que el usuario puede acceder a la aplicación por su nombre de dominio. En el futuro, además de DNS, se utilizará el servicio de nombres Ethereum Naming Service (ENS) o Unstopable Domains.
 
-In the third column, the user can access the DApp using a browser. The browser requests the DNS pointed and IPFS hosted JavaScript code as static content. This code then accesses the Algorand blockchain and uses Algorand wallets for signing transacions before sending them to the nearest Algorand node. 
+En la tercera columna, el usuario puede acceder a la DApp utilizando un navegador. El navegador solicita el código JavaScript alojado en IPFS y apuntado por DNS como contenido estático. Este código luego accede a la cadena de bloques de Algorand y usa las billeteras de Algorand para firmar transacciones antes de enviarlas al nodo de Algorand más cercano. 
 
-Notably, Algorand network cost is relatively low. This allows for the Borrower to deploy a new instance of the Smart Contract for each NFT put as a collateral, and create an auction for it. When the auction ends, the lending commences, and when the lending ends, whether with repayment or liquidation, the Smart Contract can be destroyed.
+En particular, el costo de la red de Algorand es relativamente bajo. Esto permite que el Prestatario implemente una nueva instancia del Contrato Inteligente para cada NFT puesto como garantía y cree una subasta para ello. Cuando finaliza la subasta, comienza el préstamo, y cuando finaliza el préstamo, ya sea con reembolso o liquidación, el Smart Contract puede ser destruido.
 
-Th auction is governed on-chain as low network fees allow this as well. 
+La subasta se rige en cadena, ya que las bajas tarifas de la red también lo permiten. 
 
-### Workflow
+### Flujo de trabajo
 
-The NFT lending process is described as follows:
+El proceso de préstamos NFT se describe a continuación:
 
 ![DApp Diagram](doc/DApp%20Diagram.png)
 
-- The Borrower sets up the auction by offering his NFT and putting it into the Auction Smart Contract as collateral. The initial parameters are the duration of the auction, deadline for repayment of the loan, the amount borrowed, the maximal agreeable repayment amount, the minimal bid decrease (factor of the previous difference between the above two parameters).
-- Potential Lenders start bidding at the maximal agreeable repayment amount and compete by bidding lower repayment amounts. At the end of the auction the winning bidder is the one offering the lowest repayment amount. As prospective Lenders bid, they deposit the funds to be borrowed into the Smart Contract. As a new winning bid arrives along with a deposit, the overtaken bidder is refunded her deposit immediately.
-- Once the auction end, the loan commences. The Borrower can immediately borrow the funds by pulling them from the Smart Contract.
-- If the Borrower repays the loan timely before the deadline, he gets his NFT back, while the repayment funds go immediately to the Lender.
-- If the Borrower fails to repay the loan timely he goes into default, after which the Lender can liquidate the loan and receive the NFT deposited as collateral. 
+- El Prestatario establece la subasta ofreciendo su NFT y poniéndolo en el Contrato Inteligente de Subasta como garantía. Los parámetros iniciales son la duración de la subasta, la fecha límite para el reembolso del préstamo, el monto prestado, el monto máximo de reembolso aceptable, la disminución mínima de la oferta (factor de la diferencia anterior entre los dos parámetros anteriores).
+- Los prestamistas potenciales comienzan a ofertar por el monto de reembolso máximo aceptable y compiten licitando montos de reembolso más bajos. Al final de la subasta, el postor ganador es el que ofrece el monto de reembolso más bajo. A medida que los posibles prestamistas pujan, depositan los fondos que se tomarán prestados en el contrato inteligente. Cuando llega una nueva oferta ganadora junto con un depósito, al postor superado se le reembolsa su depósito de inmediato.
+- Una vez finalizada la subasta, comienza el préstamo. El Prestatario puede pedir prestados los fondos inmediatamente retirándolos del Contrato Inteligente.
+- Si el Prestatario paga el préstamo a tiempo antes de la fecha límite, recupera su NFT, mientras que los fondos de reembolso van inmediatamente al Prestamista.
+- Si el Prestatario no paga el préstamo a tiempo, entra en incumplimiento, después de lo cual el Prestamista puede liquidar el préstamo y recibir el NFT depositado como garantía. 
 
-So why does not the Borrower make payments, like in the regular bank loans? There is no need to repay while still having the collateral locked - this is just an additional risk. Instead the Borrower can engage his funds elsewhere in DeFi and make extra money.
+Entonces, ¿por qué el Prestatario no realiza pagos, como en los préstamos bancarios regulares? No es necesario reembolsar mientras se mantiene la garantía bloqueada; esto es solo un riesgo adicional. En cambio, el Prestatario puede invertir sus fondos en otras partes de DeFi y ganar dinero extra.
 
-Here is the timing of events. Initially there is a loan auction:
+Aquí está el momento de los eventos. Inicialmente hay una subasta de préstamos:
 
 ![Loan Auction](doc/Loan%20Auction.png)
 
-There are two possible outcomes: successful repayment or liquidation.
+Hay dos posibles resultados: reembolso o liquidación satisfactorios.
 
-Repayment:
+Reembolso:
 
 ![Loan Repayment](doc/Loan%20Repayment.png)
 
-The owner deposits the NFT along with the terms. The lender accepts the terms and lends the money in form of an Algorand ASA token. Once the owner repays the debt determined in the terms, the NFT is returned to the owner.
+El propietario deposita el NFT junto con los términos. El prestamista acepta los términos y presta el dinero en forma de un token de Algorand ASA. Una vez que el propietario paga la deuda determinada en los términos, el NFT se devuelve al propietario.
 
-Liquidation:
+Liquidación:
 
 ![Loan Liquidation](doc/Loan%20Liquidation.png)
 
-If the NFT does not repay the debt timely within the deadline, upon request of the lender the NFT is transferred to the lender as part of the liquidation process.
+Si el NFT no paga la deuda a tiempo dentro del plazo, a solicitud del prestamista, el NFT se transfiere al prestamista como parte del proceso de liquidación.
 
-## Further Work
+## Más Trabajo
 
-In addition to ability to set up auctions, an on-chain auction advertising Smart Contract shall be developed. This way Borrowers and Lenders can meet at this DApp, without having been in contact previously in any way. 
+Además de la capacidad para establecer subastas, se desarrollará un Smart Contract publicitario de subastas en cadena. De esta manera los Prestatarios y Prestamistas pueden reunirse en este DApp, sin haber estado en contacto previamente de ninguna manera. 
