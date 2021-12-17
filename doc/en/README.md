@@ -12,23 +12,23 @@ In an auction the prospective Lenders compete for the best offering to the Borro
 
 Using fungible collateral in DeFi lending was one of the first offerings. Typically, the borrower vouches a collateral which is expected to increase in value. Against that collateral, the borrower gets a more stable asset, which is expected to be easier to repay. The funds borrowed can be put to work in other DeFi protocols. For the lender, the profit lays in the interest rate charged for the assets lent. Lenders can chose between various lending protocols in order to optimize their yield. For example, one of the first and largest DeFi lending protocol is AAVE:
 
-![Fungible Lending](doc/AAVE%203D.png)
+![Fungible Lending](AAVE%203D.jpg)
 
 This is very convenient for using fungible assets as collateral. However, if the borrower has liquid fungible assets, the motive for obtaining a loan against that is not very intuitive. 
 
 A house for example is non-fungible. It can be represented as NFT. AAVE expects a fungible collateral, as it is easy to treat in "bulk" without special attention put into each loan. A non-fungible collateral would not work there:
 
-![Non-Fungible Collateral](doc/AAVE%20Fail%203D.png)
+![Non-Fungible Collateral](AAVE%20Fail%203D.jpg)
 
 This is why we need a protocol for lending against non-fungible collateral:
 
-![NFT Lending](doc/NFT%20LENDING%203D.png)
+![NFT Lending](NFT%20LENDING%203D.jpg)
 
 The simplest way to do this would be to **find a way the Borrower and the Lender to somehow fin each other** and decide on the terms. Then they can enter a simple escrow Smart Contract to achieve the deal trustlessly. Trustlessly means without a need of trust - all anyone needs to trust is that the Smart Contract is going to behave as programmed, and to assure this is the core job of the Smart Contract capable blockchain such as Algorand.
 
 Instead of sending the Lender and the Borrower to another venue, in order to find each other, a friendly DApp would allow them to stay and find each other without going elsewhere. To achieve this, the DApp offers an auction:
 
-![AUCTION](doc/AUCTION.png)
+![AUCTION](AUCTION%203D.jpg)
 
 ## Implementation
 
@@ -42,7 +42,7 @@ The front end is running in the user's browser as JavaScript code. This code is 
 
 The following diagram shows the deployment and usage lifetime of the application.
 
-![Lifecycle](doc/Development%20and%20Usage%20Process.png)
+![Development and Usage Process](Development%20and%20Usage%20Process.png)
 
 In the first column, the contracts written in PyTeal are compiled into TEAL code understandable by Algorand an deployed to the blockchain.
 
@@ -58,7 +58,7 @@ The auction is governed on-chain as low network fees allow this as well.
 
 The NFT lending process is described as follows:
 
-![DApp Diagram](doc/DApp%20Diagram.png)
+![DApp Diagram](DApp%20Diagram.png)
 
 - The Borrower sets up the auction by offering his NFT and putting it into the Auction Smart Contract as collateral. The initial parameters are the duration of the auction, deadline for repayment of the loan, the amount borrowed, the maximal agreeable repayment amount, the minimal bid decrease (factor of the previous difference between the above two parameters).
 - Potential Lenders start bidding at the maximal agreeable repayment amount and compete by bidding lower repayment amounts. At the end of the auction the winning bidder is the one offering the lowest repayment amount. As prospective Lenders bid, they deposit the funds to be borrowed into the Smart Contract. As a new winning bid arrives along with a deposit, the overtaken bidder is refunded her deposit immediately.
@@ -70,19 +70,19 @@ So why does not the Borrower make payments, like in the regular bank loans? Ther
 
 Here is the timing of events. Initially there is a loan auction:
 
-![Loan Auction](doc/Loan%20Auction.png)
+![Loan Auction](Loan%20Auction.png)
 
 There are two possible outcomes: successful repayment or liquidation.
 
 Repayment:
 
-![Loan Repayment](doc/Loan%20Repayment.png)
+![Loan Repayment](Loan%20Repayment.png)
 
 The owner deposits the NFT along with the terms. The lender accepts the terms and lends the money in form of an Algorand ASA token. Once the owner repays the debt determined in the terms, the NFT is returned to the owner.
 
 Liquidation:
 
-![Loan Liquidation](doc/Loan%20Liquidation.png)
+![Loan Liquidation](Loan%20Liquidation.png)
 
 If the NFT does not repay the debt timely within the deadline, upon request of the lender the NFT is transferred to the lender as part of the liquidation process.
 

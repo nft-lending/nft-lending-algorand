@@ -1,4 +1,4 @@
-#  Propuesta por el proyecto de ALgorand LatAm Hackathon - Equipo Hija y Padre
+#  Propuesta por el proyecto de Algorand LatAm Hackathon - Equipo Hija y Padre
 
 ## Introducción
 
