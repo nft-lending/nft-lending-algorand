@@ -6,6 +6,9 @@ The back end is using only the Algorand blockchain, and as such it does not need
 
 The front end can be deployed as static content, prefferrably on IPFS, in order to avoid content modification hacks. Once served, it is running JavaScript code in the browser using React.js and the Algorand JavaScript API. It uses the MyAlgo Connect Wallet in order to sign the transactions.
 
+
+## Demo videos: 
+[ENGLISH](https://www.youtube.com/watch?v=jfCHU62Etrw) and [ESPAÑOL](https://www.youtube.com/watch?v=CXHnScXCA-U)
 ## Documentation
 
 Documentation in [ENGLISH](doc/en/README.md) and [ESPAÑOL](doc/es/README.md)
