@@ -188,7 +188,7 @@ function Borrower(props) {
                                 </Button>
                                 <br/><br/>
                                 <Button variant="primary" onClick={onRepay}>
-                                    Repay Auction + Delete
+                                    Repay + Delete
                                 </Button>
                                 <br/><br/>
                                 <Button variant="primary" onClick={onCancelAuction}>
