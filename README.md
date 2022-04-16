@@ -1,3 +1,5 @@
+This project won the [first prize at the LatAm Algorand Hackathon 2021](doc/Algorand%20LatAm%202021%20-%20awards.jpeg).
+
 # NFT Lending Auction
 
 NFT Lending Auction allows the owners of NFTs to obtain collateralized loans. The lenders compete in an auction for best repayment terms. The winning lender gets to provide the loan.
