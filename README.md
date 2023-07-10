@@ -1,4 +1,4 @@
-This project won the [first prize at the LatAm Algorand Hackathon 2021](doc/Algorand%20LatAm%202021%20-%20awards.jpeg).
+This project won the [1st Place at the LatAm Algorand Hackathon 2021](doc/Algorand%20LatAm%202021%20-%20awards.jpeg).
 
 # NFT Lending Auction
 
